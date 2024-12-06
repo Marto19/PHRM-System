@@ -1,5 +1,6 @@
 package com.phrmSystem.phrmSystem.data.entity;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -12,11 +13,7 @@ import lombok.*;
 @Getter
 @Setter
 @Table(name = "roles")
-public class Role {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Role extends BaseEntity {
 
     @Column(name = "role_name")
     @NotBlank(message = "The role name cannot be blank.")
