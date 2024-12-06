@@ -41,8 +41,17 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public Role updateRole(Role role, long id) {
-        return null;
+    public Role updateRole(Role updatedRole, long id) {
+
+        Role existingRole = roleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(("Role with id " + id + " not found")));
+
+        validateRole(updatedRole);
+
+        existingRole.setRole_name(updatedRole.getRole_name());
+        existingRole.setDescription(updatedRole.getDescription());
+
+        return roleRepository.save(existingRole);
     }
 
     @Override
