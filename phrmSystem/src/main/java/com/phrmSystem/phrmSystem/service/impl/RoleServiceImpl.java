@@ -56,6 +56,9 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void deleteRole(long id) {
-
+        if(!roleRepository.existsById(id)){
+            throw new RuntimeException("Role with id " + id + " not found, cannot delete.");
+        }
+        deleteRole(id);
     }
 }
