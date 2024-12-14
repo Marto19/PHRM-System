@@ -18,13 +18,13 @@ public class Role extends BaseEntity {
     @Column(name = "role_name")
     @NotBlank(message = "The role name cannot be blank.")
     @Size(min = 3, max = 20, message = "The role name cannot be below 3 and exceed 20 characters.")
-    private String roleName;
+    private String role_name;
 
     @Column(name = "description")
     @Size(max = 100, message = "The description must not exceed 100 characters.")
     private String description;
 
-    public Role(String roleName) {
-        this.roleName = roleName;
+    public Role(String role_name) {
+        this.role_name = role_name;
     }
 }

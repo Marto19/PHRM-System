@@ -16,9 +16,9 @@ public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
 
     private void validateRole(Role role){
-        if (!StringUtils.hasText(role.getRoleName())) {
+        if (!StringUtils.hasText(role.getRole_name())) {
             throw new RuntimeException("Role name cannot be blank");
-        } else if (roleRepository.findByRoleName(role.getRoleName()).isPresent()) {
+        } else if (roleRepository.findByRoleName(role.getRole_name()).isPresent()) {
             throw new RuntimeException("Role with that name already exists.");
         }
     }
@@ -48,7 +48,7 @@ public class RoleServiceImpl implements RoleService {
 
         validateRole(updatedRole);
 
-        existingRole.setRoleName(updatedRole.getRoleName());
+        existingRole.setRole_name(updatedRole.getRole_name());
         existingRole.setDescription(updatedRole.getDescription());
 
         return roleRepository.save(existingRole);
