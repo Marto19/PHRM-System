@@ -34,7 +34,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        String issuerUri = "http://localhost:8080/realms/pharmacy-application-realm";
+        String issuerUri = "http://localhost:4000/realms/phrm_system";
         return JwtDecoders.fromIssuerLocation(issuerUri);
     }
 
