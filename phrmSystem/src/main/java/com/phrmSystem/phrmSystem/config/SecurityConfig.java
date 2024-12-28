@@ -1,6 +1,7 @@
 package com.phrmSystem.phrmSystem.config;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -8,6 +9,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -29,28 +31,33 @@ import static org.springframework.security.config.Customizer.withDefaults;
         securedEnabled = true
 )
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        String issuerUri = "http://localhost:4000/realms/phrm_system";
-        return JwtDecoders.fromIssuerLocation(issuerUri);
-    }
+//    @Bean
+//    public JwtDecoder jwtDecoder() {
+//        String issuerUri = "http://localhost:4000/realms/phrm_system";
+//        return JwtDecoders.fromIssuerLocation(issuerUri);
+//    }
+//
+//    @Bean
+//    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+//        final JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+//        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakAuthorityConverter());
+//        return jwtAuthenticationConverter;
+//    }
 
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        final JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakAuthorityConverter());
-        return jwtAuthenticationConverter;
-    }
+
+
+    private final  JwtAuthConverter jwtAuthConverter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests
                         (
                                 authz -> authz
-//                                        .requestMatchers("/recipes/**").hasAuthority("doctor")
+//                                        .requestMatchers("/recipes/**").hasRole("doctor")
+//                                        .requestMatchers("/recipes/**").hasRole("admin")
 //                                        .requestMatchers("/api/recipes/**").hasAuthority("doctor")
 //                                        .requestMatchers("/medicines/**").hasAuthority("seller")
 //                                        .requestMatchers("/api/medicines/**").hasAuthority("seller")
@@ -61,9 +68,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwtCustomizer -> jwtCustomizer
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter())))
-                .oauth2Login(Customizer.withDefaults());
+                                .jwtAuthenticationConverter(jwtAuthConverter)))
+                .oauth2Login(Customizer.withDefaults())
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                );
         return http.build();
     }
+
 
 }
