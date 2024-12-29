@@ -2,6 +2,7 @@ package com.phrmSystem.phrmSystem.service.impl;
 
 import com.phrmSystem.phrmSystem.data.entity.Role;
 import com.phrmSystem.phrmSystem.data.repo.RoleRepository;
+import com.phrmSystem.phrmSystem.exceptions.ResourceNotFoundException;
 import com.phrmSystem.phrmSystem.service.RoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,18 @@ public class RoleServiceImpl implements RoleService {
 
     private final RoleRepository roleRepository;
 
-    private void validateRole(Role role){
+    private void validateRole(Role role) {
         if (!StringUtils.hasText(role.getRoleName())) {
-            throw new RuntimeException("Role name cannot be blank");
-        } else if (roleRepository.findByRoleName(role.getRoleName()).isPresent()) {
-            throw new RuntimeException("Role with that name already exists.");
+            throw new IllegalArgumentException("Role name cannot be blank");
+        }
+        if (roleRepository.findByRoleName(role.getRoleName()).isPresent()) {
+            throw new IllegalStateException("Role with that name already exists.");
+        }
+    }
+
+    private void validateUpdatedRole(Role role) {
+        if (!StringUtils.hasText(role.getRoleName())) {
+            throw new IllegalArgumentException("Role name cannot be blank");
         }
     }
 
@@ -31,7 +39,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Role getRole(long id) {
         return roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Role with id " + id + "not found."));
+                .orElseThrow(() -> new ResourceNotFoundException("Role with id " + id + " not found."));
     }
 
     @Override
@@ -42,23 +50,18 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public Role updateRole(Role updatedRole, long id) {
-
-        Role existingRole = roleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(("Role with id " + id + " not found")));
-
-        validateRole(updatedRole);
-
+        Role existingRole = getRole(id);
+        validateUpdatedRole(updatedRole);
         existingRole.setRoleName(updatedRole.getRoleName());
         existingRole.setDescription(updatedRole.getDescription());
-
         return roleRepository.save(existingRole);
     }
 
     @Override
     public void deleteRole(long id) {
-        if(!roleRepository.existsById(id)){
-            throw new RuntimeException("Role with id " + id + " not found, cannot delete.");
+        if (!roleRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Role with id " + id + " not found, cannot delete.");
         }
-        deleteRole(id);
+        roleRepository.deleteById(id);
     }
 }

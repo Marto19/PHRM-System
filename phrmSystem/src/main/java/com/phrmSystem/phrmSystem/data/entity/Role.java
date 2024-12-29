@@ -12,12 +12,14 @@ import lombok.*;
 @ToString
 @Getter
 @Setter
-@Table(name = "roles")
+@Table(name = "roles", uniqueConstraints = {
+        @UniqueConstraint(columnNames = "role_name", name = "unique_role_name")
+})
 public class Role extends BaseEntity {
 
-    @Column(name = "role_name")
+    @Column(name = "role_name", nullable = false, unique = true)
     @NotBlank(message = "The role name cannot be blank.")
-    @Size(min = 3, max = 20, message = "The role name cannot be below 3 and exceed 20 characters.")
+    @Size(min = 3, max = 20, message = "The role name must be between 3 and 20 characters.")
     private String roleName;
 
     @Column(name = "description")
@@ -28,3 +30,4 @@ public class Role extends BaseEntity {
         this.roleName = roleName;
     }
 }
+
