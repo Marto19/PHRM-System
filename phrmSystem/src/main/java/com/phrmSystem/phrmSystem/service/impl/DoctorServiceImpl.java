@@ -1,7 +1,9 @@
 package com.phrmSystem.phrmSystem.service.impl;
 
 import com.phrmSystem.phrmSystem.data.entity.Doctor;
+import com.phrmSystem.phrmSystem.data.entity.DoctorSpecialization;
 import com.phrmSystem.phrmSystem.data.repo.DoctorRepository;
+import com.phrmSystem.phrmSystem.data.repo.DoctorSpecializationRepository;
 import com.phrmSystem.phrmSystem.service.DoctorService;
 import com.phrmSystem.phrmSystem.exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import java.util.List;
 public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorRepository doctorRepository;
+    private final DoctorSpecializationRepository specializationRepository;
 
     private void validateDoctor(Doctor doctor) {
         if (!StringUtils.hasText(doctor.getUniqueId())) {
@@ -26,10 +29,17 @@ public class DoctorServiceImpl implements DoctorService {
         if (doctor.getSpecializations() == null || doctor.getSpecializations().isEmpty()) {
             throw new IllegalArgumentException("Doctor must have at least one specialization.");
         }
+        // Ensure each specialization exists or is valid
+        for (DoctorSpecialization specialization : doctor.getSpecializations()) {
+            if (!StringUtils.hasText(specialization.getSpecialization())) {
+                throw new IllegalArgumentException("Specialization name cannot be blank.");
+            }
+        }
         if (doctorRepository.findByUniqueId(doctor.getUniqueId()).isPresent()) {
             throw new IllegalStateException("A doctor with this unique ID already exists.");
         }
     }
+
 
     private void validateUpdatedDoctor(Doctor existingDoctor, Doctor updatedDoctor) {
         if (!StringUtils.hasText(updatedDoctor.getName())) {
@@ -54,13 +64,20 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public Doctor createDoctor(Doctor doctor) {
-        // Generate a unique ID for the doctor
         doctor.setUniqueId(generateUniqueId());
-
-        // Validate and save the doctor
         validateDoctor(doctor);
+
+        // Persist specializations separately if needed
+        for (DoctorSpecialization specialization : doctor.getSpecializations()) {
+            if (specialization.getId() == 0) {
+                // Persist new specializations
+                specializationRepository.save(specialization);
+            }
+        }
+
         return doctorRepository.save(doctor);
     }
+
 
     private String generateUniqueId() {
         // Generate a unique identifier with a prefix (e.g., "DOC") and a random numeric part
@@ -72,18 +89,19 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public Doctor updateDoctor(long id, Doctor updatedDoctor) {
-        // Retrieve the existing doctor from the database
         Doctor existingDoctor = getDoctorById(id);
-
-        // Validate updated fields (excluding uniqueId, which is immutable)
         validateUpdatedDoctor(existingDoctor, updatedDoctor);
 
-        // Update mutable fields only
         existingDoctor.setName(updatedDoctor.getName());
         existingDoctor.setSpecializations(updatedDoctor.getSpecializations());
-        existingDoctor.setPersonalDoctor(updatedDoctor.isPersonalDoctor());
 
-        // Save the updated doctor
+        // Persist changes in specializations
+        updatedDoctor.getSpecializations().forEach(specialization -> {
+            if (specialization.getId() == 0) {
+                specializationRepository.save(specialization);
+            }
+        });
+
         return doctorRepository.save(existingDoctor);
     }
 
