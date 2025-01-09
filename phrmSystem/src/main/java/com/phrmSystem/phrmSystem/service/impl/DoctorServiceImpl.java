@@ -19,36 +19,36 @@ public class DoctorServiceImpl implements DoctorService {
     private final DoctorRepository doctorRepository;
     private final DoctorSpecializationRepository specializationRepository;
 
-    private void validateDoctor(Doctor doctor) {
-        if (!StringUtils.hasText(doctor.getUniqueId())) {
-            throw new IllegalArgumentException("Doctor's unique ID cannot be blank.");
-        }
-        if (!StringUtils.hasText(doctor.getName())) {
-            throw new IllegalArgumentException("Doctor's name cannot be blank.");
-        }
-        if (doctor.getSpecializations() == null || doctor.getSpecializations().isEmpty()) {
-            throw new IllegalArgumentException("Doctor must have at least one specialization.");
-        }
-        // Ensure each specialization exists or is valid
-        for (DoctorSpecialization specialization : doctor.getSpecializations()) {
-            if (!StringUtils.hasText(specialization.getSpecialization())) {
-                throw new IllegalArgumentException("Specialization name cannot be blank.");
-            }
-        }
-        if (doctorRepository.findByUniqueId(doctor.getUniqueId()).isPresent()) {
-            throw new IllegalStateException("A doctor with this unique ID already exists.");
-        }
-    }
+//    private void validateDoctor(Doctor doctor) {
+//        if (!StringUtils.hasText(doctor.getUniqueId())) {
+//            throw new IllegalArgumentException("Doctor's unique ID cannot be blank.");
+//        }
+//        if (!StringUtils.hasText(doctor.getName())) {
+//            throw new IllegalArgumentException("Doctor's name cannot be blank.");
+//        }
+//        if (doctor.getSpecializations() == null || doctor.getSpecializations().isEmpty()) {
+//            throw new IllegalArgumentException("Doctor must have at least one specialization.");
+//        }
+//        // Ensure each specialization exists or is valid
+//        for (DoctorSpecialization specialization : doctor.getSpecializations()) {
+//            if (!StringUtils.hasText(specialization.getSpecialization())) {
+//                throw new IllegalArgumentException("Specialization name cannot be blank.");
+//            }
+//        }
+//        if (doctorRepository.findByUniqueId(doctor.getUniqueId()).isPresent()) {
+//            throw new IllegalStateException("A doctor with this unique ID already exists.");
+//        }
+//    }
 
 
-    private void validateUpdatedDoctor(Doctor existingDoctor, Doctor updatedDoctor) {
-        if (!StringUtils.hasText(updatedDoctor.getName())) {
-            throw new IllegalArgumentException("Doctor's name cannot be blank.");
-        }
-        if (updatedDoctor.getSpecializations() == null || updatedDoctor.getSpecializations().isEmpty()) {
-            throw new IllegalArgumentException("Doctor must have at least one specialization.");
-        }
-    }
+//    private void validateUpdatedDoctor(Doctor existingDoctor, Doctor updatedDoctor) {
+//        if (!StringUtils.hasText(updatedDoctor.getName())) {
+//            throw new IllegalArgumentException("Doctor's name cannot be blank.");
+//        }
+//        if (updatedDoctor.getSpecializations() == null || updatedDoctor.getSpecializations().isEmpty()) {
+//            throw new IllegalArgumentException("Doctor must have at least one specialization.");
+//        }
+//    }
 
 
     @Override
@@ -65,7 +65,7 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public Doctor createDoctor(Doctor doctor) {
         doctor.setUniqueId(generateUniqueId());
-        validateDoctor(doctor);
+//        validateDoctor(doctor);
 
         // Persist specializations separately if needed
         for (DoctorSpecialization specialization : doctor.getSpecializations()) {
@@ -89,20 +89,21 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public Doctor updateDoctor(long id, Doctor updatedDoctor) {
-        Doctor existingDoctor = getDoctorById(id);
-        validateUpdatedDoctor(existingDoctor, updatedDoctor);
+//        Doctor existingDoctor = getDoctorById(id);
+//        validateUpdatedDoctor(existingDoctor, updatedDoctor);
+//
+//        existingDoctor.setName(updatedDoctor.getName());
+//        existingDoctor.setSpecializations(updatedDoctor.getSpecializations());
+//
+//        // Persist changes in specializations
+//        updatedDoctor.getSpecializations().forEach(specialization -> {
+//            if (specialization.getId() == 0) {
+//                specializationRepository.save(specialization);
+//            }
+//        });
 
-        existingDoctor.setName(updatedDoctor.getName());
-        existingDoctor.setSpecializations(updatedDoctor.getSpecializations());
-
-        // Persist changes in specializations
-        updatedDoctor.getSpecializations().forEach(specialization -> {
-            if (specialization.getId() == 0) {
-                specializationRepository.save(specialization);
-            }
-        });
-
-        return doctorRepository.save(existingDoctor);
+//        return doctorRepository.save(existingDoctor);
+        return updatedDoctor;
     }
 
 

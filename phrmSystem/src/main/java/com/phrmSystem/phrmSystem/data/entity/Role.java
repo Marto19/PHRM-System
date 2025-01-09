@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,6 +27,10 @@ public class Role extends BaseEntity {
     @Column(name = "description")
     @Size(max = 100, message = "The description must not exceed 100 characters.")
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     public Role(String roleName) {
         this.roleName = roleName;

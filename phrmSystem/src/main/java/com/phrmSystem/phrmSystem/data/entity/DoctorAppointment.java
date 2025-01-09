@@ -2,8 +2,8 @@ package com.phrmSystem.phrmSystem.data.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -14,18 +14,22 @@ import java.time.LocalDateTime;
 @Table(name = "doctor_appointments")
 public class DoctorAppointment extends BaseEntity {
 
+    @Column(name = "date", nullable = false)
+    private LocalDateTime date;
+
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
     @ManyToOne
+    @JoinColumn(name = "patient_ill_his_id")
+    private PatientIllnessHistory patientIllnessHistory;
+
+    @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
     private Doctor doctor;
 
-    @Column(name = "date", nullable = false)
-    private LocalDateTime date;
+    @OneToMany(mappedBy = "doctorAppointment")
+    private Set<Diagnosis> diagnosis;
 
-    @ManyToOne
-    @JoinColumn(name = "diagnosis_id", nullable = false)
-    private Diagnosis diagnosis;
 }

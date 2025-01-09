@@ -2,8 +2,8 @@ package com.phrmSystem.phrmSystem.data.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDate;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -27,11 +27,9 @@ public class SickDay extends BaseEntity {
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
-    @ManyToOne
-    @JoinColumn(name = "doctor_id", nullable = false)
-    private Doctor doctor;
+    @ManyToMany
+    private Set<Diagnosis> diagnosis;
 
     @ManyToOne
-    @JoinColumn(name = "diagnosis_id", nullable = false)
-    private Diagnosis diagnosis;
+    private Doctor doctor;
 }

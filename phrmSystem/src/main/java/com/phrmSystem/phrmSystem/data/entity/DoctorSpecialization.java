@@ -2,7 +2,6 @@ package com.phrmSystem.phrmSystem.data.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,4 +20,3 @@ public class DoctorSpecialization extends BaseEntity {
     @ManyToMany(mappedBy = "specializations")
     private Set<Doctor> doctors = new HashSet<>();
 }
-
