@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 @Entity
@@ -28,12 +30,7 @@ public class Role extends BaseEntity {
     @Size(max = 100, message = "The description must not exceed 100 characters.")
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = true)
-    private User user;
-
-    public Role(String roleName) {
-        this.roleName = roleName;
-    }
+    @ManyToMany(mappedBy = "role")
+    private List<User> user  = new LinkedList<>();
 }
 

@@ -1,30 +1,28 @@
 package com.phrmSystem.phrmSystem.data.repo;
 
-import com.phrmSystem.phrmSystem.data.entity.Doctor;
-import com.phrmSystem.phrmSystem.data.entity.Patient;
+import com.phrmSystem.phrmSystem.data.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
-public interface DoctorRepository extends JpaRepository<Doctor, Long> {
+public interface DoctorRepository extends JpaRepository<User, Long> {
 
-    // Find doctors by specialization
-    @Query("SELECT d FROM Doctor d JOIN d.specializations s WHERE s.specialization LIKE %:specialization%")
-    List<Doctor> findBySpecializationsContaining(@Param("specialization") String specialization);
+    // Find all doctors
+    @Query("SELECT u FROM User u JOIN u.role r WHERE r.roleName = 'DOCTOR'")
+    List<User> findAllDoctors();
 
-    @Query("SELECT d FROM Doctor d JOIN d.specializations s WHERE s.specialization = :specialization")
-    List<Doctor> findBySpecialization(String specialization);
+    // Find all personal doctors
+    @Query("SELECT u FROM User u WHERE u.isPersonalDoctor = TRUE")
+    List<User> findAllPersonalDoctors();
 
-    @Query("SELECT COUNT(p) FROM Patient p WHERE p.personalDoctor.id = :doctorId")
-    int countPatientsByDoctorId(Long doctorId);
+    // Find doctor by unique ID
+    @Query("SELECT u FROM User u WHERE u.uniqueId = :uniqueId")
+    User findDoctorByUniqueId(String uniqueId);
 
-    List<Doctor> findByIsPersonalDoctor(boolean isPersonalDoctor);
-
-
-
+    // Find doctor specializations
+    @Query("SELECT u FROM User u JOIN u.specializations s WHERE u.id = :doctorId")
+    List<User> findDoctorSpecializations(Long doctorId);
 }

@@ -16,7 +16,7 @@ public class PatientIllnessHistory extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "patients_idpatient", nullable = false)
-    private Patient patient;
+    private User patient;
 
     @OneToMany(mappedBy = "patientIllnessHistory")
     private Set<DoctorAppointment> doctorAppointment;

@@ -25,11 +25,11 @@ public class SickDay extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
-    private Patient patient;
+    private User patient;
 
     @ManyToMany
     private Set<Diagnosis> diagnosis;
 
     @ManyToOne
-    private Doctor doctor;
+    private User doctor;
 }

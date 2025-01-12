@@ -1,20 +1,20 @@
 package com.phrmSystem.phrmSystem.service;
 
-import com.phrmSystem.phrmSystem.data.entity.Patient;
+import com.phrmSystem.phrmSystem.data.entity.User;
+import com.phrmSystem.phrmSystem.data.entity.PatientIllnessHistory;
+import com.phrmSystem.phrmSystem.data.entity.DoctorAppointment;
+import com.phrmSystem.phrmSystem.dto.UserDTO;
 
 import java.util.List;
 
 public interface PatientService {
-
-    Patient createPatient(Patient patient);
-
-    Patient updatePatient(Long patientId, Patient updatedPatient);
-
+    User createPatient(User patient);
+    User updatePatient(Long patientId, User updatedPatient);
     void deletePatient(Long patientId);
-
-    Patient getPatientById(Long patientId);
-
-    List<Patient> getAllPatients();
-
-    Patient findByUniqueIdentification(String uniqueIdentification);
+    List<UserDTO> getAllPatients();
+    User getPatientById(Long id);
+    User getPatientByUniqueIdentification(String uniqueIdentification);
+    List<User> getPatientsWithInsurancePaid();
+    List<PatientIllnessHistory> getPatientIllnessHistory(Long patientId);
+    DoctorAppointment createAppointment(Long patientId, DoctorAppointment appointment);
 }

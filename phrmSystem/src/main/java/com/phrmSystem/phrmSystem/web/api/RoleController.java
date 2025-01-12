@@ -1,6 +1,7 @@
 package com.phrmSystem.phrmSystem.controller;
 
 import com.phrmSystem.phrmSystem.data.entity.Role;
+import com.phrmSystem.phrmSystem.dto.RoleDTO;
 import com.phrmSystem.phrmSystem.service.RoleService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -35,9 +36,12 @@ public class RoleController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Role> getRoleById(@PathVariable Long id) {
-        return ResponseEntity.ok(roleService.getRoleById(id));
+    public ResponseEntity<RoleDTO> getRoleById(@PathVariable Long id) {
+        Role role = roleService.getRoleById(id);
+        RoleDTO roleDTO = new RoleDTO(role.getId(), role.getRoleName(), role.getDescription());
+        return ResponseEntity.ok(roleDTO);
     }
+
 
     @GetMapping
     public ResponseEntity<List<Role>> getAllRoles() {

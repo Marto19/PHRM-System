@@ -18,5 +18,5 @@ public class DoctorSpecialization extends BaseEntity {
     private String specialization;
 
     @ManyToMany(mappedBy = "specializations")
-    private Set<Doctor> doctors = new HashSet<>();
+    private Set<User> doctors = new HashSet<>();
 }

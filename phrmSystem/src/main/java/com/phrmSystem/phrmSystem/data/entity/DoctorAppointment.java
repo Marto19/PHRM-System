@@ -19,7 +19,7 @@ public class DoctorAppointment extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
-    private Patient patient;
+    private User patient;
 
     @ManyToOne
     @JoinColumn(name = "patient_ill_his_id")
@@ -27,7 +27,7 @@ public class DoctorAppointment extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
-    private Doctor doctor;
+    private User doctor;
 
     @OneToMany(mappedBy = "doctorAppointment")
     private Set<Diagnosis> diagnosis;
