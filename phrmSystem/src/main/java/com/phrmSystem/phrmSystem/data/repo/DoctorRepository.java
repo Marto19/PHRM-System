@@ -1,6 +1,7 @@
 package com.phrmSystem.phrmSystem.data.repo;
 
 import com.phrmSystem.phrmSystem.data.entity.Doctor;
+import com.phrmSystem.phrmSystem.data.entity.Patient;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,10 +17,14 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
     @Query("SELECT d FROM Doctor d JOIN d.specializations s WHERE s.specialization LIKE %:specialization%")
     List<Doctor> findBySpecializationsContaining(@Param("specialization") String specialization);
 
-    // Find personal doctors
-    List<Doctor> findByIsPersonalDoctorTrue();
+    @Query("SELECT d FROM Doctor d JOIN d.specializations s WHERE s.specialization = :specialization")
+    List<Doctor> findBySpecialization(String specialization);
 
-    // Find a doctor by unique ID
-    Optional<Doctor> findByUniqueId(String uniqueId);
+    @Query("SELECT COUNT(p) FROM Patient p WHERE p.personalDoctor.id = :doctorId")
+    int countPatientsByDoctorId(Long doctorId);
+
+    List<Doctor> findByIsPersonalDoctor(boolean isPersonalDoctor);
+
+
 
 }

@@ -1,49 +1,56 @@
-package com.phrmSystem.phrmSystem.web.api;
+package com.phrmSystem.phrmSystem.controller;
 
 import com.phrmSystem.phrmSystem.data.entity.Role;
 import com.phrmSystem.phrmSystem.service.RoleService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequiredArgsConstructor
-@RequestMapping("api/roles")
+@RequestMapping("/api/roles")
 public class RoleController {
-
     private final RoleService roleService;
 
-    @GetMapping
-    @PreAuthorize("hasRole('client_admin')")
-    public List<Role> getRoles() {
-        return roleService.getRoles();
-    }
-
-    @GetMapping("/{id}")
-    public Role getRoleById(@PathVariable long id) {
-        return roleService.getRole(id);
+    public RoleController(RoleService roleService) {
+        this.roleService = roleService;
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED) // Sets HTTP status to 201
-    public Role createRole(@Valid @RequestBody Role role) {
-        return roleService.createRole(role);
+    public ResponseEntity<Role> createRole(@Valid @RequestBody Role role) {
+        return ResponseEntity.ok(roleService.createRole(role));
     }
 
     @PutMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT) // Sets HTTP status to 204
-    public Role updateRole(@Valid @RequestBody Role role, @PathVariable long id) {
-        return roleService.updateRole(role, id);
+    public ResponseEntity<Role> updateRole(@PathVariable Long id, @Valid @RequestBody Role role) {
+        return ResponseEntity.ok(roleService.updateRole(id, role));
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT) // Sets HTTP status to 204
-    public void deleteRole(@PathVariable long id) {
+    public ResponseEntity<Void> deleteRole(@PathVariable Long id) {
         roleService.deleteRole(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Role> getRoleById(@PathVariable Long id) {
+        return ResponseEntity.ok(roleService.getRoleById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Role>> getAllRoles() {
+        return ResponseEntity.ok(roleService.getAllRoles());
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Role>> searchRolesByKeyword(@RequestParam String keyword) {
+        return ResponseEntity.ok(roleService.searchRolesByKeyword(keyword));
+    }
+
+    @GetMapping("/name/{roleName}")
+    public ResponseEntity<Optional<Role>> getRoleByName(@PathVariable String roleName) {
+        return ResponseEntity.ok(roleService.getRoleByName(roleName));
     }
 }
-

@@ -17,7 +17,7 @@ public class Patient extends BaseEntity {
     @Column(name = "unique_identification", nullable = false, unique = true)
     private String uniqueIdentification;
 
-    @Column(name = "insurance_paid_last_6_months", nullable = false)
+    @Column(name = "insurance_paid_last_6_months", nullable = true)
     private boolean insurancePaidLast6Months;
 
     @OneToOne
@@ -28,7 +28,7 @@ public class Patient extends BaseEntity {
     private Set<SickDay> sickDay;
 
     @ManyToOne
-    @JoinColumn(name = "personal_doctor_id", nullable = false)
+    @JoinColumn(name = "personal_doctor_id", nullable = true)
     private Doctor personalDoctor;
 
     @OneToMany(mappedBy = "patient")

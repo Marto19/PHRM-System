@@ -29,7 +29,7 @@ public class Role extends BaseEntity {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
     public Role(String roleName) {

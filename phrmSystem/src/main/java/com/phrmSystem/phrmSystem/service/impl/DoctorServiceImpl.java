@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -57,9 +58,9 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Doctor getDoctorById(long id) {
+    public Doctor getDoctorById(Long id) {
         return doctorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor with id " + id + " not found."));
+                .orElseThrow(() -> new NoSuchElementException("Doctor not found"));
     }
 
     @Override
@@ -88,27 +89,17 @@ public class DoctorServiceImpl implements DoctorService {
 
 
     @Override
-    public Doctor updateDoctor(long id, Doctor updatedDoctor) {
-//        Doctor existingDoctor = getDoctorById(id);
-//        validateUpdatedDoctor(existingDoctor, updatedDoctor);
-//
-//        existingDoctor.setName(updatedDoctor.getName());
-//        existingDoctor.setSpecializations(updatedDoctor.getSpecializations());
-//
-//        // Persist changes in specializations
-//        updatedDoctor.getSpecializations().forEach(specialization -> {
-//            if (specialization.getId() == 0) {
-//                specializationRepository.save(specialization);
-//            }
-//        });
-
-//        return doctorRepository.save(existingDoctor);
-        return updatedDoctor;
+    public Doctor updateDoctor(Long id, Doctor updatedDoctor) {
+        Doctor existingDoctor = getDoctorById(id);
+        existingDoctor.setUniqueId(updatedDoctor.getUniqueId());
+        existingDoctor.setPersonalDoctor(updatedDoctor.isPersonalDoctor());
+        existingDoctor.setSpecializations(updatedDoctor.getSpecializations());
+        return doctorRepository.save(existingDoctor);
     }
 
 
     @Override
-    public void deleteDoctor(long id) {
+    public void deleteDoctor(Long id) {
         if (!doctorRepository.existsById(id)) {
             throw new ResourceNotFoundException("Doctor with id " + id + " not found.");
         }
@@ -116,15 +107,28 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<Doctor> findDoctorsBySpecialization(String specialization) {
+    public List<Doctor> getDoctorsBySpecialization(String specialization) {
         if (!StringUtils.hasText(specialization)) {
             throw new IllegalArgumentException("Specialization cannot be blank.");
         }
-        return doctorRepository.findBySpecializationsContaining(specialization);
+        return doctorRepository.findBySpecialization(specialization);
+    }
+
+    public int countPatientsByDoctorId(Long doctorId) {
+        return doctorRepository.countPatientsByDoctorId(doctorId);
     }
 
     @Override
     public List<Doctor> getPersonalDoctors() {
-        return doctorRepository.findByIsPersonalDoctorTrue();
+        return doctorRepository.findByIsPersonalDoctor(true);
+    }
+
+    @Override
+    public List<Object[]> getDoctorsWithMostPatients() {
+        return doctorRepository.findAll() // Custom logic for most patients
+                .stream()
+                .map(doctor -> new Object[]{doctor, countPatientsByDoctorId(doctor.getId())})
+                .sorted((o1, o2) -> Integer.compare((int) o2[1], (int) o1[1]))
+                .toList();
     }
 }

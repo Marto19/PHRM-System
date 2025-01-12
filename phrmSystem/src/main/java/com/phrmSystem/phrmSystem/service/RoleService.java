@@ -1,21 +1,23 @@
 package com.phrmSystem.phrmSystem.service;
 
 import com.phrmSystem.phrmSystem.data.entity.Role;
-import com.phrmSystem.phrmSystem.data.repo.RoleRepository;
-import com.phrmSystem.phrmSystem.service.impl.RoleServiceImpl;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RoleService {
 
-    List<Role> getRoles();
-
-    Role getRole(long id);
-
     Role createRole(Role role);
 
-    Role updateRole(Role role, long id);
+    Role updateRole(Long roleId, Role updatedRole);
 
-    void deleteRole(long id);
+    void deleteRole(Long roleId);
 
+    Role getRoleById(Long roleId);
+
+    List<Role> getAllRoles();
+
+    Optional<Role> getRoleByName(String roleName);
+
+    List<Role> searchRolesByKeyword(String keyword);
 }
