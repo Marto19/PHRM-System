@@ -14,4 +14,5 @@ public class PatientIllnessHistoryDTO {
     private String illnessName;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Long patientId;
 }

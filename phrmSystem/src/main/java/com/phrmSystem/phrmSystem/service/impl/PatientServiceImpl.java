@@ -130,7 +130,8 @@ public User createPatient(User patient) {
                         history.getId(),
                         history.getIllnessName(),
                         history.getStartDate(),
-                        history.getEndDate()
+                        history.getEndDate(),
+                        history.getPatient().getId()
                 ))
                 .collect(Collectors.toList());
     }

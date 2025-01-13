@@ -1,6 +1,7 @@
 package com.phrmSystem.phrmSystem.data.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -16,6 +17,7 @@ import java.util.Set;
 public class PatientIllnessHistory extends BaseEntity {
 
     @Column(name = "illness_name", nullable = false)
+    @NotBlank(message = "Illness name is required")
     private String illnessName;
 
     @Column(name = "start_date")
@@ -24,10 +26,11 @@ public class PatientIllnessHistory extends BaseEntity {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patients_idpatient", nullable = false)
     private User patient;
 
-    @OneToMany(mappedBy = "patientIllnessHistory")
+    @OneToMany(mappedBy = "patientIllnessHistory", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<DoctorAppointment> doctorAppointment;
+
 }
