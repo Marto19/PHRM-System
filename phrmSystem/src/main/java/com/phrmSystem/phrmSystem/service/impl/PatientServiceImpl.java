@@ -8,6 +8,8 @@ import com.phrmSystem.phrmSystem.data.repo.PatientRepository;
 import com.phrmSystem.phrmSystem.data.repo.DoctorAppointmentRepository;
 import com.phrmSystem.phrmSystem.data.repo.RoleRepository;
 import com.phrmSystem.phrmSystem.data.repo.UserRepository;
+import com.phrmSystem.phrmSystem.dto.DoctorAppointmentDTO;
+import com.phrmSystem.phrmSystem.dto.PatientIllnessHistoryDTO;
 import com.phrmSystem.phrmSystem.dto.UserDTO;
 import com.phrmSystem.phrmSystem.mappers.UserMapper;
 import com.phrmSystem.phrmSystem.service.PatientService;
@@ -101,11 +103,11 @@ public User createPatient(User patient) {
                 .collect(Collectors.toList());
     }
 
-
     @Override
-    public User getPatientById(Long id) {
-        return patientRepository.findById(id)
+    public UserDTO getPatientById(Long id) {
+        User patient = patientRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Patient not found with id: " + id));
+        return UserMapper.toDTO(patient);
     }
 
     @Override
@@ -119,15 +121,41 @@ public User createPatient(User patient) {
     }
 
     @Override
-    public List<PatientIllnessHistory> getPatientIllnessHistory(Long patientId) {
-        User patient = getPatientById(patientId);
-        return List.copyOf(patient.getPatientIllnessHistory());
+    public List<PatientIllnessHistoryDTO> getPatientIllnessHistory(Long patientId) {
+        User patient = userRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found with id: " + patientId));
+
+        return patient.getPatientIllnessHistory().stream()
+                .map(history -> new PatientIllnessHistoryDTO(
+                        history.getId(),
+                        history.getIllnessName(),
+                        history.getStartDate(),
+                        history.getEndDate()
+                ))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public DoctorAppointment createAppointment(Long patientId, DoctorAppointment appointment) {
-        User patient = getPatientById(patientId);
+    public DoctorAppointmentDTO createAppointment(Long patientId, DoctorAppointmentDTO appointmentDTO) {        // Retrieve the patient entity
+        User patient = userRepository.findById(patientId)
+                .orElseThrow(() -> new RuntimeException("Patient not found with id: " + patientId));
+
+        // Map the DTO to the DoctorAppointment entity
+        DoctorAppointment appointment = new DoctorAppointment();
+        appointment.setDate(appointmentDTO.getDate());
         appointment.setPatient(patient);
-        return doctorAppointmentRepository.save(appointment);
+
+        // Save the appointment
+        DoctorAppointment savedAppointment = doctorAppointmentRepository.save(appointment);
+
+        // Map the saved entity back to a DTO and return
+        return new DoctorAppointmentDTO(
+                savedAppointment.getId(),
+                savedAppointment.getDate(),
+                savedAppointment.getPatient().getId(),
+                savedAppointment.getDoctor() != null ? savedAppointment.getDoctor().getId() : null
+        );
     }
+
+
 }

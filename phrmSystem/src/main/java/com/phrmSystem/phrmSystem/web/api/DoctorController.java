@@ -3,6 +3,8 @@ package com.phrmSystem.phrmSystem.web.api;
 import com.phrmSystem.phrmSystem.data.entity.User;
 import com.phrmSystem.phrmSystem.data.entity.DoctorSpecialization;
 import com.phrmSystem.phrmSystem.data.entity.DoctorAppointment;
+import com.phrmSystem.phrmSystem.dto.AppointmentDTO;
+import com.phrmSystem.phrmSystem.dto.SpecializationDTO;
 import com.phrmSystem.phrmSystem.dto.UserDTO;
 import com.phrmSystem.phrmSystem.service.DoctorService;
 import org.springframework.http.ResponseEntity;
@@ -49,9 +51,11 @@ public class DoctorController {
 
     // Fetch a doctor by ID
     @GetMapping("/{id}")
-    public ResponseEntity<User> getDoctorById(@PathVariable Long id) {
-        return ResponseEntity.ok(doctorService.getDoctorById(id));
+    public ResponseEntity<UserDTO> getDoctorById(@PathVariable Long id) {
+        UserDTO doctorDTO = doctorService.getDoctorById(id);
+        return ResponseEntity.ok(doctorDTO);
     }
+
 
     // Fetch a doctor by unique ID
     @GetMapping("/unique/{uniqueId}")
@@ -67,21 +71,23 @@ public class DoctorController {
 
     // Fetch a doctor's specializations
     @GetMapping("/{id}/specializations")
-    public ResponseEntity<List<DoctorSpecialization>> getDoctorSpecializations(@PathVariable Long id) {
+    public ResponseEntity<List<SpecializationDTO>> getDoctorSpecializations(@PathVariable Long id) {
         return ResponseEntity.ok(doctorService.getDoctorSpecializations(id));
     }
 
     // Add a specialization to a doctor
     @PostMapping("/{id}/specializations")
-    public ResponseEntity<User> addSpecializationToDoctor(
+    public ResponseEntity<UserDTO> addSpecializationToDoctor(
             @PathVariable Long id,
-            @RequestBody DoctorSpecialization specialization) {
-        return ResponseEntity.ok(doctorService.addSpecializationToDoctor(id, specialization));
+            @RequestBody SpecializationDTO specializationDTO) {
+        return ResponseEntity.ok(doctorService.addSpecializationToDoctor(id, specializationDTO));
     }
+
+
 
     // Fetch a doctor's appointments
     @GetMapping("/{id}/appointments")
-    public ResponseEntity<List<DoctorAppointment>> getDoctorAppointments(@PathVariable Long id) {
+    public ResponseEntity<List<AppointmentDTO>> getDoctorAppointments(@PathVariable Long id) {
         return ResponseEntity.ok(doctorService.getDoctorAppointments(id));
     }
 }

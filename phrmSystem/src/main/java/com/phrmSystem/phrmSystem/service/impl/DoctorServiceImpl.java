@@ -6,6 +6,8 @@ import com.phrmSystem.phrmSystem.data.entity.DoctorSpecialization;
 import com.phrmSystem.phrmSystem.data.entity.DoctorAppointment;
 import com.phrmSystem.phrmSystem.data.repo.DoctorRepository;
 import com.phrmSystem.phrmSystem.data.repo.RoleRepository;
+import com.phrmSystem.phrmSystem.dto.AppointmentDTO;
+import com.phrmSystem.phrmSystem.dto.SpecializationDTO;
 import com.phrmSystem.phrmSystem.dto.UserDTO;
 import com.phrmSystem.phrmSystem.mappers.UserMapper;
 import com.phrmSystem.phrmSystem.service.DoctorService;
@@ -89,9 +91,10 @@ public class DoctorServiceImpl implements DoctorService {
 
 
     @Override
-    public User getDoctorById(Long id) {
-        return doctorRepository.findById(id)
+    public UserDTO getDoctorById(Long id) {
+        User doctor = doctorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + id));
+        return UserMapper.toDTO(doctor);
     }
 
     @Override
@@ -105,21 +108,44 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<DoctorSpecialization> getDoctorSpecializations(Long doctorId) {
-        User doctor = getDoctorById(doctorId);
-        return List.copyOf(doctor.getSpecializations());
+    public List<SpecializationDTO> getDoctorSpecializations(Long doctorId) {
+        User doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + doctorId));
+
+        return doctor.getSpecializations().stream()
+                .map(specialization -> new SpecializationDTO(
+                        specialization.getId(),
+                        specialization.getSpecialization()
+                ))
+                .collect(Collectors.toList());
+    }
+
+
+    @Override
+    public List<AppointmentDTO> getDoctorAppointments(Long doctorId) {
+        User doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + doctorId));
+
+        return doctor.getDoctorAppointments().stream()
+                .map(appointment -> new AppointmentDTO(
+                        appointment.getId(),
+                        appointment.getPatient().getFirstName() + " " + appointment.getPatient().getLastName(),
+                        appointment.getDate()
+                ))
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<DoctorAppointment> getDoctorAppointments(Long doctorId) {
-        User doctor = getDoctorById(doctorId);
-        return List.copyOf(doctor.getDoctorAppointments());
-    }
+    public UserDTO addSpecializationToDoctor(Long doctorId, SpecializationDTO specializationDTO) {
+        User doctor = doctorRepository.findById(doctorId)
+                .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + doctorId));
 
-    @Override
-    public User addSpecializationToDoctor(Long doctorId, DoctorSpecialization specialization) {
-        User doctor = getDoctorById(doctorId);
+        DoctorSpecialization specialization = new DoctorSpecialization();
+        specialization.setSpecialization(specializationDTO.getName());
+
         doctor.getSpecializations().add(specialization);
-        return doctorRepository.save(doctor);
+        User updatedDoctor = doctorRepository.save(doctor);
+
+        return UserMapper.toDTO(updatedDoctor);
     }
 }

@@ -3,6 +3,8 @@ package com.phrmSystem.phrmSystem.controller;
 import com.phrmSystem.phrmSystem.data.entity.User;
 import com.phrmSystem.phrmSystem.data.entity.PatientIllnessHistory;
 import com.phrmSystem.phrmSystem.data.entity.DoctorAppointment;
+import com.phrmSystem.phrmSystem.dto.DoctorAppointmentDTO;
+import com.phrmSystem.phrmSystem.dto.PatientIllnessHistoryDTO;
 import com.phrmSystem.phrmSystem.dto.UserDTO;
 import com.phrmSystem.phrmSystem.service.PatientService;
 import org.springframework.http.ResponseEntity;
@@ -45,9 +47,11 @@ public class PatientController {
 
     // Fetch a patient by ID
     @GetMapping("/{id}")
-    public ResponseEntity<User> getPatientById(@PathVariable Long id) {
-        return ResponseEntity.ok(patientService.getPatientById(id));
+    public ResponseEntity<UserDTO> getPatientById(@PathVariable Long id) {
+        UserDTO patientDTO = patientService.getPatientById(id);
+        return ResponseEntity.ok(patientDTO);
     }
+
 
     // Fetch a patient by unique identification
     @GetMapping("/unique/{uniqueIdentification}")
@@ -63,15 +67,17 @@ public class PatientController {
 
     // Fetch a patient's illness history
     @GetMapping("/{id}/history")
-    public ResponseEntity<List<PatientIllnessHistory>> getPatientIllnessHistory(@PathVariable Long id) {
+    public ResponseEntity<List<PatientIllnessHistoryDTO>> getPatientIllnessHistory(@PathVariable Long id) {
         return ResponseEntity.ok(patientService.getPatientIllnessHistory(id));
     }
 
     // Create an appointment for a patient
     @PostMapping("/{id}/appointments")
-    public ResponseEntity<DoctorAppointment> createAppointment(
+    public ResponseEntity<DoctorAppointmentDTO> createAppointment(
             @PathVariable Long id,
-            @RequestBody DoctorAppointment appointment) {
-        return ResponseEntity.ok(patientService.createAppointment(id, appointment));
+            @RequestBody DoctorAppointmentDTO appointmentDTO) {
+        // Call the service method and return the mapped DTO
+        return ResponseEntity.ok(patientService.createAppointment(id, appointmentDTO));
     }
+
 }
