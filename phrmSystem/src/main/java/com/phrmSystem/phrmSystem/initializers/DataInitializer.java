@@ -76,6 +76,28 @@ public class DataInitializer implements CommandLineRunner {
         coldDiagnosis.setDiagnosisName("Cold");
         coldDiagnosis.setDiagnosisDescription("Common cold");
         diagnosisRepository.save(coldDiagnosis);
+
+        // Add doctor specializations
+        DoctorSpecialization specialization1 = new DoctorSpecialization();
+        specialization1.setSpecialization("Cardiology");
+        specializationRepository.save(specialization1);
+
+        DoctorSpecialization specialization2 = new DoctorSpecialization();
+        specialization2.setSpecialization("Neurology");
+        specializationRepository.save(specialization2);
+
+        DoctorSpecialization specialization3 = new DoctorSpecialization();
+        specialization3.setSpecialization("Pediatrics");
+        specializationRepository.save(specialization3);
+
+        DoctorSpecialization specialization4 = new DoctorSpecialization();
+        specialization4.setSpecialization("Dermatology");
+        specializationRepository.save(specialization4);
+
+        DoctorSpecialization specialization5 = new DoctorSpecialization();
+        specialization5.setSpecialization("Orthopedics");
+        specializationRepository.save(specialization5);
+
     }
 
 //    private void associateSpecializationWithDoctor(User doctor, DoctorSpecialization specialization) {
