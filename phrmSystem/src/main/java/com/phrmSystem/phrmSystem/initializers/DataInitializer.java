@@ -50,6 +50,22 @@ public class DataInitializer implements CommandLineRunner {
         doctor.setRole(List.of(doctorRole));
         userRepository.save(doctor);
 
+        User doctor2 = new User();
+        doctor2.setFirstName("Ivan");
+        doctor2.setLastName("Gradarov");
+        doctor2.setUniqueId("DOC133");
+        doctor2.setIsPersonalDoctor(true);
+        doctor2.setRole(List.of(doctorRole));
+        userRepository.save(doctor2);
+
+        User doctor3 = new User();
+        doctor3.setFirstName("Just");
+        doctor3.setLastName("John");
+        doctor3.setUniqueId("DOC234");
+        doctor3.setIsPersonalDoctor(true);
+        doctor3.setRole(List.of(doctorRole));
+        userRepository.save(doctor3);
+
         // Add Diagnoses
         Diagnosis fluDiagnosis = new Diagnosis();
         fluDiagnosis.setDiagnosisName("Flu");

@@ -62,9 +62,9 @@ public class User extends BaseEntity {
 
     @ManyToMany
     @JoinTable(
-            name = "doctor_specializations",
-            joinColumns = @JoinColumn(name = "doctor_id"),
-            inverseJoinColumns = @JoinColumn(name = "specialization_id")
+            name = "user_has_doctor_specialization",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "doctor_specialization_id")
     )
     private Set<DoctorSpecialization> specializations = new HashSet<>();
 }
