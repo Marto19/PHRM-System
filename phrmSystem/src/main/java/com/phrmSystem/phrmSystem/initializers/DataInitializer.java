@@ -21,16 +21,22 @@ public class DataInitializer implements CommandLineRunner {
     private final DoctorSpecializationRepository specializationRepository;
     private final EntityManager entityManager;
     private final DiagnosisRepository diagnosisRepository;
+    private final SickDayRepository sickDayRepository;
+    private final MedicineRepository medicineRepository;
+    private final DoctorAppointmentRepository doctorAppointmentRepository;
 
     public DataInitializer(RoleRepository roleRepository,
                            UserRepository userRepository,
                            DoctorSpecializationRepository specializationRepository,
-                           EntityManager entityManager, DiagnosisRepository diagnosisRepository) {
+                           EntityManager entityManager, DiagnosisRepository diagnosisRepository, SickDayRepository sickDayRepository, MedicineRepository medicineRepository, DoctorAppointmentRepository doctorAppointmentRepository) {
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
         this.specializationRepository = specializationRepository;
         this.entityManager = entityManager;
         this.diagnosisRepository = diagnosisRepository;
+        this.sickDayRepository = sickDayRepository;
+        this.medicineRepository = medicineRepository;
+        this.doctorAppointmentRepository = doctorAppointmentRepository;
     }
 
     @Override
@@ -66,6 +72,14 @@ public class DataInitializer implements CommandLineRunner {
         doctor3.setRole(List.of(doctorRole));
         userRepository.save(doctor3);
 
+        User patient = new User();
+        patient.setFirstName("Alice");
+        patient.setLastName("Smith");
+        patient.setUniqueId("PAT001");
+        patient.setIsPersonalDoctor(false);
+        patient.setRole(List.of(patientRole));
+        userRepository.save(patient);
+
         // Add Diagnoses
         Diagnosis fluDiagnosis = new Diagnosis();
         fluDiagnosis.setDiagnosisName("Flu");
@@ -98,14 +112,77 @@ public class DataInitializer implements CommandLineRunner {
         specialization5.setSpecialization("Orthopedics");
         specializationRepository.save(specialization5);
 
-    }
+        SickDay sickDay1 = new SickDay();
+        sickDay1.setStartDate(LocalDate.of(2025, 1, 1));
+        sickDay1.setEndDate(LocalDate.of(2025, 1, 7));
+        sickDay1.setNumberOfDays(7);
+        sickDay1.setPatient(patient);
+        sickDay1.setDoctor(doctor);
+        sickDay1.setDiagnosis(Set.of(fluDiagnosis));
+        sickDayRepository.save(sickDay1);
 
-//    private void associateSpecializationWithDoctor(User doctor, DoctorSpecialization specialization) {
-//        String sql = "INSERT INTO doctor_specializations (doctor_id, specialization_id) VALUES (:doctorId, :specializationId)";
-//        entityManager.createNativeQuery(sql)
-//                .setParameter("specialization_Id", specialization.getId())
-//                .setParameter("doctor_Id", doctor.getId())
-//                .executeUpdate();
-//    }
+        SickDay sickDay2 = new SickDay();
+        sickDay2.setStartDate(LocalDate.of(2025, 2, 10));
+        sickDay2.setEndDate(LocalDate.of(2025, 2, 14));
+        sickDay2.setNumberOfDays(5);
+        sickDay2.setPatient(patient);
+        sickDay2.setDoctor(doctor);
+        sickDay2.setDiagnosis(Set.of(coldDiagnosis));
+        sickDayRepository.save(sickDay2);
+
+        SickDay sickDay3 = new SickDay();
+        sickDay3.setStartDate(LocalDate.of(2025, 3, 15));
+        sickDay3.setEndDate(LocalDate.of(2025, 3, 20));
+        sickDay3.setNumberOfDays(6);
+        sickDay3.setPatient(patient);
+        sickDay3.setDoctor(doctor);
+        sickDay3.setDiagnosis(Set.of(fluDiagnosis, coldDiagnosis));
+        sickDayRepository.save(sickDay3);
+
+        SickDay sickDay4 = new SickDay();
+        sickDay4.setStartDate(LocalDate.of(2025, 4, 5));
+        sickDay4.setEndDate(LocalDate.of(2025, 4, 9));
+        sickDay4.setNumberOfDays(4);
+        sickDay4.setPatient(patient);
+        sickDay4.setDoctor(doctor);
+        sickDay4.setDiagnosis(Set.of(fluDiagnosis));
+        sickDayRepository.save(sickDay4);
+
+        SickDay sickDay5 = new SickDay();
+        sickDay5.setStartDate(LocalDate.of(2025, 5, 20));
+        sickDay5.setEndDate(LocalDate.of(2025, 5, 25));
+        sickDay5.setNumberOfDays(6);
+        sickDay5.setPatient(patient);
+        sickDay5.setDoctor(doctor);
+        sickDay5.setDiagnosis(Set.of(coldDiagnosis));
+        sickDayRepository.save(sickDay5);
+
+        Medicine paracetamol = new Medicine();
+        paracetamol.setMedicineName("Paracetamol");
+        paracetamol.setMedicineDescription("Used for pain relief and fever reduction.");
+        paracetamol.setDiagnosis(fluDiagnosis);
+        medicineRepository.save(paracetamol);
+
+        Medicine ibuprofen = new Medicine();
+        ibuprofen.setMedicineName("Ibuprofen");
+        ibuprofen.setMedicineDescription("Used for pain relief and reducing inflammation.");
+        ibuprofen.setDiagnosis(coldDiagnosis);
+        medicineRepository.save(ibuprofen);
+
+        // Add Doctor Appointments
+        DoctorAppointment appointment1 = new DoctorAppointment();
+        appointment1.setDate(LocalDateTime.of(2025, 1, 15, 10, 30));
+        appointment1.setPatient(patient);
+        appointment1.setDoctor(doctor);
+        appointment1.setDiagnosis(Set.of(fluDiagnosis));
+        doctorAppointmentRepository.save(appointment1);
+
+        DoctorAppointment appointment2 = new DoctorAppointment();
+        appointment2.setDate(LocalDateTime.of(2025, 2, 20, 14, 0));
+        appointment2.setPatient(patient);
+        appointment2.setDoctor(doctor);
+        appointment2.setDiagnosis(Set.of(coldDiagnosis));
+        doctorAppointmentRepository.save(appointment2);
+    }
 
 }
