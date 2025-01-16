@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/roles")
@@ -44,9 +45,14 @@ public class RoleController {
 
 
     @GetMapping
-    public ResponseEntity<List<Role>> getAllRoles() {
-        return ResponseEntity.ok(roleService.getAllRoles());
+    public ResponseEntity<List<RoleDTO>> getAllRoles() {
+        List<RoleDTO> roles = roleService.getAllRoles()
+                .stream()
+                .map(role -> new RoleDTO(role.getId(), role.getRoleName(), role.getDescription()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(roles);
     }
+
 
     @GetMapping("/search")
     public ResponseEntity<List<Role>> searchRolesByKeyword(@RequestParam String keyword) {

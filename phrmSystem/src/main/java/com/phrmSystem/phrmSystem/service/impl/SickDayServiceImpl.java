@@ -89,18 +89,16 @@ public class SickDayServiceImpl implements SickDayService {
     }
 
     private SickDayDTO mapToDTO(SickDay sickDay) {
-        return new SickDayDTO(
-                sickDay.getId(),
-                sickDay.getStartDate(),
-                sickDay.getEndDate(),
-                sickDay.getNumberOfDays(),
-                sickDay.getPatient() != null ? sickDay.getPatient().getId() : null,
-                sickDay.getDiagnosis() != null ? sickDay.getDiagnosis().stream()
-                        .map(Diagnosis::getId)
-                        .collect(Collectors.toSet()) : null,
-                sickDay.getDoctor() != null ? sickDay.getDoctor().getId() : null
-        );
+        SickDayDTO dto = new SickDayDTO();
+        dto.setId(sickDay.getId());
+        dto.setStartDate(sickDay.getStartDate());
+        dto.setEndDate(sickDay.getEndDate());
+        dto.setNumberOfDays(sickDay.getNumberOfDays());
+        dto.setDoctorId(sickDay.getDoctor() != null ? sickDay.getDoctor().getId() : null);
+        dto.setPatientId(sickDay.getPatient() != null ? sickDay.getPatient().getId() : null);
+        return dto;
     }
+
 
     private SickDay mapToEntity(SickDayDTO sickDayDTO) {
         SickDay sickDay = new SickDay();
@@ -130,4 +128,5 @@ public class SickDayServiceImpl implements SickDayService {
 
         return sickDay;
     }
+
 }

@@ -7,7 +7,7 @@ const Navbar = () => {
         <AppBar position="static">
             <Toolbar>
                 <Typography variant="h6" style={{ flexGrow: 1 }}>
-                    User Management
+                    Management Portal
                 </Typography>
                 <Button color="inherit" component={Link} to="/users">
                     User List
@@ -15,12 +15,19 @@ const Navbar = () => {
                 <Button color="inherit" component={Link} to="/users/create">
                     Create User
                 </Button>
-                <Button color="inherit" component={Link} to="/">
-                    Public Page
+                <Button color="inherit" component={Link} to="/sick-days">
+                    Sick Day List
                 </Button>
-                <Button color="inherit" component={Link} to="/protected">
-                    Protected Page
+                <Button color="inherit" component={Link} to="/sick-days/create">
+                    Create Sick Day
                 </Button>
+                <Button color="inherit" component={Link} to="/roles">
+                    Role List
+                </Button>
+                <Button color="inherit" component={Link} to="/roles/create">
+                    Create Role
+                </Button>
+
             </Toolbar>
         </AppBar>
     );

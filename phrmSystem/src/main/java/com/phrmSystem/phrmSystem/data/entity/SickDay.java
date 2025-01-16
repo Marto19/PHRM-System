@@ -23,13 +23,13 @@ public class SickDay extends BaseEntity {
     @Column(name = "number_of_days", nullable = false)
     private int numberOfDays;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "patient_id", nullable = false)
     private User patient;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Diagnosis> diagnosis;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private User doctor;
 }
