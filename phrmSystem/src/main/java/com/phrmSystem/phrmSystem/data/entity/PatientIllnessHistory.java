@@ -18,7 +18,7 @@ public class PatientIllnessHistory extends BaseEntity {
 
     @Column(name = "illness_name", nullable = false)
     @NotBlank(message = "Illness name is required")
-    private String illnessName;
+    private String illnessName; //TODO:remove this
 
     @Column(name = "start_date")
     private LocalDate startDate;

@@ -7,6 +7,8 @@ import SickDayList from "./components/SickDayList";
 import SickDayForm from "./components/SickDayForm";
 import RoleList from "./components/role/RoleList";
 import RoleForm from "./components/role/RoleForm";
+import PatientIllnessHistoryList from "./components/patientIllnessHistory/PatientIllnessHistoryList.jsx";
+import PatientIllnessHistoryForm from "./components/patientIllnessHistory/PatientIllnessHistoryForm.jsx";
 
 function App() {
     return (
@@ -22,6 +24,9 @@ function App() {
                 <Route path="/roles" element={<RoleList />} />
                 <Route path="/roles/create" element={<RoleForm />} />
                 <Route path="/roles/:id/edit" element={<RoleForm />} />
+                <Route path="/illness-histories" element={<PatientIllnessHistoryList />} />
+                <Route path="/illness-histories/create" element={<PatientIllnessHistoryForm />} />
+                <Route path="/illness-histories/:id/edit" element={<PatientIllnessHistoryForm />} />
             </Routes>
         </Router>
     );

@@ -1,33 +1,31 @@
 import React from "react";
 import { AppBar, Toolbar, Button, Typography } from "@mui/material";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+    const navigate = useNavigate();
+
     return (
         <AppBar position="static">
             <Toolbar>
                 <Typography variant="h6" style={{ flexGrow: 1 }}>
                     Management Portal
                 </Typography>
-                <Button color="inherit" component={Link} to="/users">
+                <Button color="inherit" onClick={() => navigate("/users")}>
                     User List
                 </Button>
-                <Button color="inherit" component={Link} to="/users/create">
-                    Create User
-                </Button>
-                <Button color="inherit" component={Link} to="/sick-days">
+                <Button color="inherit" onClick={() => navigate("/sick-days")}>
                     Sick Day List
                 </Button>
-                <Button color="inherit" component={Link} to="/sick-days/create">
-                    Create Sick Day
-                </Button>
-                <Button color="inherit" component={Link} to="/roles">
+                <Button color="inherit" onClick={() => navigate("/roles")}>
                     Role List
                 </Button>
-                <Button color="inherit" component={Link} to="/roles/create">
-                    Create Role
+                <Button color="inherit" onClick={() => navigate("/illness-histories")}>
+                    Illness History List
                 </Button>
-
+                <Button color="inherit" onClick={() => navigate("/illness-histories/create")}>
+                    Create Illness History
+                </Button>
             </Toolbar>
         </AppBar>
     );
