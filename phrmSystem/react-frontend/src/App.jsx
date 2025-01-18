@@ -1,10 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import UserList from "./components/UserList";
-import UserForm from "./components/UserForm";
-import SickDayList from "./components/SickDayList";
-import SickDayForm from "./components/SickDayForm";
+import Navbar from "./components/navigation/Navbar.jsx";
+import UserList from "./components/user/UserList.jsx";
+import UserForm from "./components/user/UserForm.jsx";
+import SickDayList from "./components/sickDay/SickDayList.jsx";
+import SickDayForm from "./components/sickDay/SickDayForm.jsx";
 import RoleList from "./components/role/RoleList";
 import RoleForm from "./components/role/RoleForm";
 import PatientIllnessHistoryList from "./components/patientIllnessHistory/PatientIllnessHistoryList.jsx";
