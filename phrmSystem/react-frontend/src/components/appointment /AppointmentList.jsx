@@ -106,7 +106,7 @@ const AppointmentList = () => {
                                         <Button
                                             variant="outlined"
                                             color="primary"
-                                            onClick={() => navigate(`/appointments/${appointment.id}/view`)}
+                                            onClick={() => navigate(`/appointments/${appointment.id}/edit`)}
                                         >
                                             View
                                         </Button>
