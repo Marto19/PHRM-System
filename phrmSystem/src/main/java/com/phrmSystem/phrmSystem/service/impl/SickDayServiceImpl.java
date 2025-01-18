@@ -10,6 +10,7 @@ import com.phrmSystem.phrmSystem.dto.SickDayDTO;
 import com.phrmSystem.phrmSystem.service.SickDayService;
 import org.springframework.stereotype.Service;
 
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,10 +44,16 @@ public class SickDayServiceImpl implements SickDayService {
 
     @Override
     public SickDayDTO createSickDay(SickDayDTO sickDayDTO) {
+        if (sickDayDTO.getStartDate() != null && sickDayDTO.getEndDate() != null) {
+            long daysBetween = ChronoUnit.DAYS.between(sickDayDTO.getStartDate(), sickDayDTO.getEndDate());
+            sickDayDTO.setNumberOfDays((int) daysBetween);
+        }
+
         SickDay sickDay = mapToEntity(sickDayDTO);
         SickDay savedSickDay = sickDayRepository.save(sickDay);
         return mapToDTO(savedSickDay);
     }
+
 
     @Override
     public SickDayDTO updateSickDay(Long id, SickDayDTO sickDayDTO) {
@@ -55,7 +62,11 @@ public class SickDayServiceImpl implements SickDayService {
 
         sickDay.setStartDate(sickDayDTO.getStartDate());
         sickDay.setEndDate(sickDayDTO.getEndDate());
-        sickDay.setNumberOfDays(sickDayDTO.getNumberOfDays());
+
+        if (sickDayDTO.getStartDate() != null && sickDayDTO.getEndDate() != null) {
+            long daysBetween = ChronoUnit.DAYS.between(sickDayDTO.getStartDate(), sickDayDTO.getEndDate());
+            sickDay.setNumberOfDays((int) daysBetween);
+        }
 
         if (sickDayDTO.getPatientId() != null) {
             User patient = userRepository.findById(sickDayDTO.getPatientId())
@@ -80,6 +91,7 @@ public class SickDayServiceImpl implements SickDayService {
         SickDay updatedSickDay = sickDayRepository.save(sickDay);
         return mapToDTO(updatedSickDay);
     }
+
 
     @Override
     public void deleteSickDay(Long id) {

@@ -43,11 +43,11 @@ const SickDayForm = () => {
                 .get(`/api/sick-days/${id}`)
                 .then((response) => {
                     const { startDate, endDate, numberOfDays, patient, doctor } = response.data;
-                    setStartDate(startDate || ""); // Default to empty string if undefined
-                    setEndDate(endDate || ""); // Default to empty string if undefined
-                    setNumberOfDays(numberOfDays || 0); // Default to 0 if undefined
-                    setPatientId(patient?.id || ""); // Safely access patient.id
-                    setDoctorId(doctor?.id || ""); // Safely access doctor.id
+                    setStartDate(startDate || "");
+                    setEndDate(endDate || "");
+                    setNumberOfDays(numberOfDays || 0);
+                    setPatientId(patient?.id || "");
+                    setDoctorId(doctor?.id || "");
                 })
                 .catch((err) => {
                     console.error("Error fetching sick day:", err);
@@ -56,10 +56,20 @@ const SickDayForm = () => {
         }
     }, [id]);
 
+    useEffect(() => {
+        if (startDate && endDate) {
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            const diffInTime = end.getTime() - start.getTime();
+            const diffInDays = Math.ceil(diffInTime / (1000 * 3600 * 24)); // Convert milliseconds to days
+            setNumberOfDays(diffInDays > 0 ? diffInDays : 0); // Ensure non-negative value
+        }
+    }, [startDate, endDate]);
+
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        if (!startDate || !endDate || !numberOfDays || !patientId || !doctorId) {
+        if (!startDate || !endDate || !patientId || !doctorId) {
             alert("All fields are required.");
             return;
         }
@@ -116,7 +126,7 @@ const SickDayForm = () => {
                         label="Number of Days"
                         type="number"
                         value={numberOfDays}
-                        onChange={(e) => setNumberOfDays(e.target.value)}
+                        InputProps={{ readOnly: true }} // Make the field non-editable
                         fullWidth
                         margin="normal"
                     />
