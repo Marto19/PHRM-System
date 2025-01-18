@@ -12,19 +12,25 @@ const Navbar = () => {
                     Management Portal
                 </Typography>
                 <Button color="inherit" onClick={() => navigate("/users")}>
-                    User List
+                    User
                 </Button>
                 <Button color="inherit" onClick={() => navigate("/sick-days")}>
-                    Sick Day List
+                    Sick Day
                 </Button>
                 <Button color="inherit" onClick={() => navigate("/roles")}>
-                    Role List
+                    Role
                 </Button>
                 <Button color="inherit" onClick={() => navigate("/illness-histories")}>
-                    Illness History List
+                    Illness History
                 </Button>
-                <Button color="inherit" onClick={() => navigate("/illness-histories/create")}>
-                    Create Illness History
+                <Button color="inherit" onClick={() => navigate("/patients")}>
+                    Patient
+                </Button>
+                <Button color="inherit" onClick={() => navigate("/medicines")}>
+                    Medicines
+                </Button>
+                <Button color="inherit" onClick={() => navigate("/specializations")}>
+                    Specializations
                 </Button>
             </Toolbar>
         </AppBar>

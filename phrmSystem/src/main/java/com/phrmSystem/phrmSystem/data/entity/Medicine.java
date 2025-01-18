@@ -19,6 +19,6 @@ public class Medicine extends BaseEntity {
     private String medicineDescription;
 
     @ManyToOne
-    @JoinColumn(name = "diagnosis_id", nullable = false)
+    @JoinColumn(name = "diagnosis_id", nullable = true)
     private Diagnosis diagnosis;
 }

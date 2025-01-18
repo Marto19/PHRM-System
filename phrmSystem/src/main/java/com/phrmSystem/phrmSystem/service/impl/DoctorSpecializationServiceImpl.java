@@ -7,12 +7,14 @@ import com.phrmSystem.phrmSystem.data.repo.UserRepository;
 import com.phrmSystem.phrmSystem.dto.DoctorSpecializationDTO;
 import com.phrmSystem.phrmSystem.service.DoctorSpecializationService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class DoctorSpecializationServiceImpl implements DoctorSpecializationService {
 
     private final DoctorSpecializationRepository doctorSpecializationRepository;
@@ -40,59 +42,53 @@ public class DoctorSpecializationServiceImpl implements DoctorSpecializationServ
 
     @Override
     public DoctorSpecializationDTO createDoctorSpecialization(DoctorSpecializationDTO dto) {
-        // Create a new specialization entity
         DoctorSpecialization specialization = new DoctorSpecialization();
         specialization.setSpecialization(dto.getSpecialization());
 
-        // Save the specialization entity first
-        DoctorSpecialization savedSpecialization = doctorSpecializationRepository.save(specialization);
-
-        // Map doctor IDs to User entities and associate them with the specialization
         if (dto.getDoctorIds() != null && !dto.getDoctorIds().isEmpty()) {
             Set<User> doctors = dto.getDoctorIds().stream()
                     .map(id -> userRepository.findById(id)
                             .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + id)))
                     .collect(Collectors.toSet());
 
-            savedSpecialization.setDoctors(doctors);
-            doctors.forEach(doctor -> doctor.getSpecializations().add(savedSpecialization));
+            specialization.setDoctors(doctors);
 
-            // Save the updated doctor entities to persist the relationship
-            userRepository.saveAll(doctors);
+            // Update the relationship on the doctor side
+            doctors.forEach(doctor -> doctor.getSpecializations().add(specialization));
         }
 
-        // Return the DTO without using a mapper
-        DoctorSpecializationDTO resultDto = new DoctorSpecializationDTO();
-        resultDto.setId(savedSpecialization.getId());
-        resultDto.setSpecialization(savedSpecialization.getSpecialization());
-        resultDto.setDoctorIds(
-                savedSpecialization.getDoctors().stream()
-                        .map(User::getId)
-                        .collect(Collectors.toSet())
-        );
+        DoctorSpecialization savedSpecialization = doctorSpecializationRepository.save(specialization);
 
-        return resultDto;
+        // Return DTO
+        return mapToDTO(savedSpecialization);
     }
+
 
 
     @Override
-    public DoctorSpecializationDTO updateDoctorSpecialization(Long id, DoctorSpecializationDTO doctorSpecializationDTO) {
+    public DoctorSpecializationDTO updateDoctorSpecialization(Long id, DoctorSpecializationDTO dto) {
         DoctorSpecialization specialization = doctorSpecializationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Doctor specialization not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("Specialization not found with id: " + id));
 
-        specialization.setSpecialization(doctorSpecializationDTO.getSpecialization());
+        specialization.setSpecialization(dto.getSpecialization());
 
-        if (doctorSpecializationDTO.getDoctorIds() != null) {
-            Set<User> doctors = doctorSpecializationDTO.getDoctorIds()
-                    .stream()
+        if (dto.getDoctorIds() != null) {
+            Set<User> doctors = dto.getDoctorIds().stream()
                     .map(doctorId -> userRepository.findById(doctorId)
                             .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + doctorId)))
                     .collect(Collectors.toSet());
+
             specialization.setDoctors(doctors);
+
+            // Update the relationship on the doctor side
+            doctors.forEach(doctor -> doctor.getSpecializations().add(specialization));
         }
 
-        return mapToDTO(doctorSpecializationRepository.save(specialization));
+        DoctorSpecialization updatedSpecialization = doctorSpecializationRepository.save(specialization);
+
+        return mapToDTO(updatedSpecialization);
     }
+
 
     @Override
     public void deleteDoctorSpecialization(Long id) {

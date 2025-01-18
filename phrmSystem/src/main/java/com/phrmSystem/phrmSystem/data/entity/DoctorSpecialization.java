@@ -17,6 +17,6 @@ public class DoctorSpecialization extends BaseEntity {
     @Column(name = "specialization", nullable = false)
     private String specialization;
 
-    @ManyToMany(mappedBy = "specializations")
+    @ManyToMany(mappedBy = "specializations", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Set<User> doctors = new HashSet<>();
 }

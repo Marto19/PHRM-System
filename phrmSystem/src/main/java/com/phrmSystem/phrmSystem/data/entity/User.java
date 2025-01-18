@@ -60,7 +60,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "doctor")
     private Set<DoctorAppointment> doctorAppointments = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "user_has_doctor_specialization",
             joinColumns = @JoinColumn(name = "user_id"),

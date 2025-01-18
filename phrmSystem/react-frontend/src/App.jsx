@@ -9,6 +9,12 @@ import RoleList from "./components/role/RoleList";
 import RoleForm from "./components/role/RoleForm";
 import PatientIllnessHistoryList from "./components/patientIllnessHistory/PatientIllnessHistoryList.jsx";
 import PatientIllnessHistoryForm from "./components/patientIllnessHistory/PatientIllnessHistoryForm.jsx";
+import PatientList from "./components/patient/PatientList";
+import PatientForm from "./components/patient/PatientForm";
+import MedicineList from "./components/medicine/MedicineList.jsx";
+import MedicineForm from "./components/medicine/MedicineForm.jsx";
+import DoctorSpecializationForm from "./components/doctorSpecialization/DoctorSpecializationForm.jsx";
+import DoctorSpecializationList from "./components/doctorSpecialization/DoctorSpecializationList.jsx";
 
 function App() {
     return (
@@ -27,6 +33,15 @@ function App() {
                 <Route path="/illness-histories" element={<PatientIllnessHistoryList />} />
                 <Route path="/illness-histories/create" element={<PatientIllnessHistoryForm />} />
                 <Route path="/illness-histories/:id/edit" element={<PatientIllnessHistoryForm />} />
+                <Route path="/patients" element={<PatientList />} />
+                <Route path="/patients/create" element={<PatientForm />} />
+                <Route path="/patients/:id/edit" element={<PatientForm />} />
+                <Route path="/medicines" element={<MedicineList />} />
+                <Route path="/medicines/create" element={<MedicineForm />} />
+                <Route path="/medicines/:id/edit" element={<MedicineForm />} />
+                <Route path="/specializations" element={<DoctorSpecializationList />} />
+                <Route path="/specializations/create" element={<DoctorSpecializationForm />} />
+                <Route path="/specializations/:id/edit" element={<DoctorSpecializationForm />} />
             </Routes>
         </Router>
     );
