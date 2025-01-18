@@ -15,6 +15,11 @@ import MedicineList from "./components/medicine/MedicineList.jsx";
 import MedicineForm from "./components/medicine/MedicineForm.jsx";
 import DoctorSpecializationForm from "./components/doctorSpecialization/DoctorSpecializationForm.jsx";
 import DoctorSpecializationList from "./components/doctorSpecialization/DoctorSpecializationList.jsx";
+import DoctorList from "./components/doctor/DoctorList.jsx";
+import DoctorForm from "./components/doctor/DoctorForm.jsx";
+import AppointmentList from "./components/appointment /AppointmentList"; // Adjust the path if needed
+import AppointmentForm   from "./components/appointment /AppointmentForm.jsx"; // Adjust the path if needed
+
 
 function App() {
     return (
@@ -42,6 +47,15 @@ function App() {
                 <Route path="/specializations" element={<DoctorSpecializationList />} />
                 <Route path="/specializations/create" element={<DoctorSpecializationForm />} />
                 <Route path="/specializations/:id/edit" element={<DoctorSpecializationForm />} />
+                <Route path="/doctors" element={<DoctorList />} />
+                <Route path="/doctors/create" element={<DoctorForm />} />
+                <Route path="/doctors/:id/edit" element={<DoctorForm />} />
+                <Route path="/doctors/:id/specializations" element={<DoctorSpecializationList />} />
+                <Route path="/doctors/:id/appointments" element={<AppointmentList />} />
+                <Route path="/doctors/:id/specializations/edit" element={<DoctorSpecializationForm />} />
+                <Route path="/appointments/:id" element={<AppointmentList />} />
+                <Route path="/appointments/:id/edit" element={<AppointmentForm />} />
+                <Route path="/appointments/create" element={<AppointmentForm />} />
             </Routes>
         </Router>
     );

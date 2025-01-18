@@ -32,6 +32,9 @@ const Navbar = () => {
                 <Button color="inherit" onClick={() => navigate("/specializations")}>
                     Specializations
                 </Button>
+                <Button color="inherit" onClick={() => navigate("/doctors")}>
+                    Doctors
+                </Button>
             </Toolbar>
         </AppBar>
     );
