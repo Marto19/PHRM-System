@@ -148,4 +148,18 @@ public class MedicineServiceImpl implements MedicineService {
                 medicine.getDiagnosis() != null ? medicine.getDiagnosis().getId() : null
         );
     }
+
+    @Override
+    public List<MedicineDTO> getMedicinesByDiagnosis(Long diagnosisId) {
+        List<Medicine> medicines = medicineRepository.findByDiagnosisId(diagnosisId);
+
+        if (medicines.isEmpty()) {
+            throw new RuntimeException("No medicines found for diagnosis ID: " + diagnosisId);
+        }
+
+        return medicines.stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
+    }
+
 }

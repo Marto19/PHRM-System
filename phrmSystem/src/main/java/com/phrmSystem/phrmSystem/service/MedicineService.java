@@ -10,4 +10,5 @@ public interface MedicineService {
     MedicineDTO createMedicine(MedicineDTO medicineDTO);
     MedicineDTO updateMedicine(Long id, MedicineDTO medicineDTO);
     void deleteMedicine(Long id);
+    List<MedicineDTO> getMedicinesByDiagnosis(Long diagnosisId);
 }

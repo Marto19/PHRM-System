@@ -18,82 +18,153 @@ import java.util.List;
 public class DoctorController {
 
     private final DoctorService doctorService;
-    private final DoctorRepository doctorRepository;
 
-    public DoctorController(DoctorService doctorService, DoctorRepository doctorRepository) {
+    public DoctorController(DoctorService doctorService) {
         this.doctorService = doctorService;
-        this.doctorRepository = doctorRepository;
     }
 
+    /**
+     * Creates a new doctor.
+     *
+     * @param doctor the doctor entity to be created.
+     * @return the created doctor with HTTP status 201 (Created) or an error message with HTTP status 400 (Bad Request).
+     */
     @PostMapping
-    public ResponseEntity<User> createDoctor(@RequestBody User doctor) {
-        User createdDoctor = doctorService.createDoctor(doctor);
-        return ResponseEntity.ok(createdDoctor);
+    public ResponseEntity<?> createDoctor(@RequestBody User doctor) {
+        try {
+            User createdDoctor = doctorService.createDoctor(doctor);
+            return ResponseEntity.status(201).body(createdDoctor);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
-    // Endpoint to update an existing doctor
+    /**
+     * Updates an existing doctor by ID.
+     *
+     * @param id the ID of the doctor to update.
+     * @param updatedDoctor the updated doctor details.
+     * @return the updated doctor with HTTP status 200 (OK) or an error message with HTTP status 400 (Bad Request).
+     */
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateDoctor(@PathVariable Long id, @RequestBody User updatedDoctor) {
-        User updatedDoctorResponse = doctorService.updateDoctor(id, updatedDoctor);
-        return ResponseEntity.ok(updatedDoctorResponse);
+    public ResponseEntity<?> updateDoctor(@PathVariable Long id, @RequestBody User updatedDoctor) {
+        try {
+            User updatedDoctorResponse = doctorService.updateDoctor(id, updatedDoctor);
+            return ResponseEntity.ok(updatedDoctorResponse);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
+    /**
+     * Deletes a doctor by ID.
+     *
+     * @param id the ID of the doctor to delete.
+     * @return HTTP status 204 (No Content) if successful, or an error message with HTTP status 400 (Bad Request).
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDoctor(@PathVariable Long id) {
-        doctorService.deleteDoctor(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteDoctor(@PathVariable Long id) {
+        try {
+            doctorService.deleteDoctor(id);
+            return ResponseEntity.noContent().build();
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
-    // Fetch all doctors
+    /**
+     * Retrieves all doctors.
+     *
+     * @return a list of doctors as UserDTOs with HTTP status 200 (OK).
+     */
     @GetMapping
     public ResponseEntity<List<UserDTO>> getAllDoctors() {
         List<UserDTO> doctorDTOs = doctorService.getAllDoctors();
         return ResponseEntity.ok(doctorDTOs);
     }
 
-
-    // Fetch a doctor by ID
+    /**
+     * Retrieves a doctor by ID.
+     *
+     * @param id the ID of the doctor to retrieve.
+     * @return the requested doctor as a UserDTO with HTTP status 200 (OK), or an error message with HTTP status 400 (Bad Request).
+     */
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getDoctorById(@PathVariable Long id) {
-        UserDTO doctorDTO = doctorService.getDoctorById(id);
-        return ResponseEntity.ok(doctorDTO);
+    public ResponseEntity<?> getDoctorById(@PathVariable Long id) {
+        try {
+            UserDTO doctorDTO = doctorService.getDoctorById(id);
+            return ResponseEntity.ok(doctorDTO);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
-
-    // Fetch a doctor by unique ID
+    /**
+     * Retrieves a doctor by their unique ID.
+     *
+     * @param uniqueId the unique ID of the doctor to retrieve.
+     * @return the requested doctor as a User entity with HTTP status 200 (OK), or an error message with HTTP status 400 (Bad Request).
+     */
     @GetMapping("/unique/{uniqueId}")
-    public ResponseEntity<User> getDoctorByUniqueId(@PathVariable String uniqueId) {
-        return ResponseEntity.ok(doctorService.getDoctorByUniqueId(uniqueId));
+    public ResponseEntity<?> getDoctorByUniqueId(@PathVariable String uniqueId) {
+        try {
+            User doctor = doctorService.getDoctorByUniqueId(uniqueId);
+            return ResponseEntity.ok(doctor);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
-    // Fetch a doctor's specializations
+
+    /**
+     * Retrieves the specializations of a doctor by their ID.
+     *
+     * @param id the ID of the doctor.
+     * @return a list of the doctor's specializations as SpecializationDTOs with HTTP status 200 (OK).
+     */
     @GetMapping("/{id}/specializations")
     public ResponseEntity<List<SpecializationDTO>> getDoctorSpecializations(@PathVariable Long id) {
         return ResponseEntity.ok(doctorService.getDoctorSpecializations(id));
     }
 
-    // Add a specialization to a doctor
+    /**
+     * Adds a specialization to a doctor.
+     *
+     * @param id the ID of the doctor.
+     * @param specializationDTO the details of the specialization to add.
+     * @return the updated doctor as a UserDTO with HTTP status 200 (OK), or an error message with HTTP status 400 (Bad Request).
+     */
     @PostMapping("/{id}/specializations")
-    public ResponseEntity<UserDTO> addSpecializationToDoctor(
+    public ResponseEntity<?> addSpecializationToDoctor(
             @PathVariable Long id,
             @RequestBody SpecializationDTO specializationDTO) {
-        return ResponseEntity.ok(doctorService.addSpecializationToDoctor(id, specializationDTO));
+        try {
+            UserDTO updatedDoctor = doctorService.addSpecializationToDoctor(id, specializationDTO);
+            return ResponseEntity.ok(updatedDoctor);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
-    // Fetch a doctor's appointments
+    /**
+     * Retrieves the appointments of a doctor by their ID.
+     *
+     * @param id the ID of the doctor.
+     * @return a list of the doctor's appointments as AppointmentDTOs with HTTP status 200 (OK).
+     */
     @GetMapping("/{id}/appointments")
     public ResponseEntity<List<AppointmentDTO>> getDoctorAppointments(@PathVariable Long id) {
         return ResponseEntity.ok(doctorService.getDoctorAppointments(id));
     }
 
-    // Get all personal doctors
+    /**
+     * Retrieves all personal doctors.
+     *
+     * @return a list of all personal doctors as User entities with HTTP status 200 (OK).
+     */
     @GetMapping("/personal-doctors")
     public ResponseEntity<List<User>> getAllPersonalDoctors() {
-        return ResponseEntity.ok(doctorRepository.findAllPersonalDoctors());
-    }
-
-    // Count patients for each personal doctor
-    @GetMapping("/patient-count")
-    public ResponseEntity<List<Object[]>> getPatientCountPerPersonalDoctor() {
-        return ResponseEntity.ok(doctorRepository.countPatientsPerPersonalDoctorNative());
+        return ResponseEntity.ok(doctorService.getAllPersonalDoctors());
     }
 }
+
+
