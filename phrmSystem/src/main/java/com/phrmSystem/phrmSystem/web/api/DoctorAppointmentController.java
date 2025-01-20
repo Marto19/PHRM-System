@@ -1,10 +1,13 @@
 package com.phrmSystem.phrmSystem.web.api;
 
+import com.phrmSystem.phrmSystem.data.entity.DoctorAppointment;
+import com.phrmSystem.phrmSystem.data.repo.DoctorAppointmentRepository;
 import com.phrmSystem.phrmSystem.dto.DoctorAppointmentAllDTO;
 import com.phrmSystem.phrmSystem.service.DoctorAppointmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -12,9 +15,11 @@ import java.util.List;
 public class DoctorAppointmentController {
 
     private final DoctorAppointmentService doctorAppointmentService;
+    private final DoctorAppointmentRepository doctorAppointmentRepository;
 
-    public DoctorAppointmentController(DoctorAppointmentService doctorAppointmentService) {
+    public DoctorAppointmentController(DoctorAppointmentService doctorAppointmentService, DoctorAppointmentRepository doctorAppointmentRepository) {
         this.doctorAppointmentService = doctorAppointmentService;
+        this.doctorAppointmentRepository = doctorAppointmentRepository;
     }
 
     @PostMapping
@@ -44,5 +49,17 @@ public class DoctorAppointmentController {
     public ResponseEntity<Void> deleteDoctorAppointment(@PathVariable Long id) {
         doctorAppointmentService.deleteDoctorAppointment(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/doctor/{doctorId}/date-range")
+    public ResponseEntity<List<DoctorAppointment>> getAppointmentsByDoctorAndDateRange(
+            @PathVariable Long doctorId,
+            @RequestParam String startDate,
+            @RequestParam String endDate) {
+        return ResponseEntity.ok(doctorAppointmentRepository.findAppointmentsByDoctorIdAndDateRange(
+                doctorId,
+                LocalDateTime.parse(startDate),
+                LocalDateTime.parse(endDate)
+        ));
     }
 }

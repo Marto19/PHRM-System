@@ -1,5 +1,7 @@
 package com.phrmSystem.phrmSystem.web.api;
 
+import com.phrmSystem.phrmSystem.data.entity.Medicine;
+import com.phrmSystem.phrmSystem.data.repo.MedicineRepository;
 import com.phrmSystem.phrmSystem.dto.MedicineDTO;
 import com.phrmSystem.phrmSystem.service.MedicineService;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +14,11 @@ import java.util.List;
 public class MedicineController {
 
     private final MedicineService medicineService;
+    private final MedicineRepository medicineRepository;
 
-    public MedicineController(MedicineService medicineService) {
+    public MedicineController(MedicineService medicineService, MedicineRepository medicineRepository) {
         this.medicineService = medicineService;
+        this.medicineRepository = medicineRepository;
     }
 
     @GetMapping("/{id}")
@@ -41,5 +45,11 @@ public class MedicineController {
     public ResponseEntity<Void> deleteMedicine(@PathVariable Long id) {
         medicineService.deleteMedicine(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Get medicines for a specific diagnosis
+    @GetMapping("/diagnosis/{diagnosisId}")
+    public ResponseEntity<List<Medicine>> getMedicinesByDiagnosis(@PathVariable Long diagnosisId) {
+        return ResponseEntity.ok(medicineRepository.findMedicinesByDiagnosisId(diagnosisId));
     }
 }

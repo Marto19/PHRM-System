@@ -3,6 +3,7 @@ package com.phrmSystem.phrmSystem.web.api;
 import com.phrmSystem.phrmSystem.data.entity.User;
 import com.phrmSystem.phrmSystem.data.entity.DoctorSpecialization;
 import com.phrmSystem.phrmSystem.data.entity.DoctorAppointment;
+import com.phrmSystem.phrmSystem.data.repo.DoctorRepository;
 import com.phrmSystem.phrmSystem.dto.AppointmentDTO;
 import com.phrmSystem.phrmSystem.dto.SpecializationDTO;
 import com.phrmSystem.phrmSystem.dto.UserDTO;
@@ -17,9 +18,11 @@ import java.util.List;
 public class DoctorController {
 
     private final DoctorService doctorService;
+    private final DoctorRepository doctorRepository;
 
-    public DoctorController(DoctorService doctorService) {
+    public DoctorController(DoctorService doctorService, DoctorRepository doctorRepository) {
         this.doctorService = doctorService;
+        this.doctorRepository = doctorRepository;
     }
 
     @PostMapping
@@ -82,8 +85,6 @@ public class DoctorController {
             @RequestBody SpecializationDTO specializationDTO) {
         return ResponseEntity.ok(doctorService.addSpecializationToDoctor(id, specializationDTO));
     }
-
-
 
     // Fetch a doctor's appointments
     @GetMapping("/{id}/appointments")

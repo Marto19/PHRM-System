@@ -1,5 +1,6 @@
 package com.phrmSystem.phrmSystem.web.api;
 
+import com.phrmSystem.phrmSystem.data.repo.SickDayRepository;
 import com.phrmSystem.phrmSystem.dto.SickDayDTO;
 import com.phrmSystem.phrmSystem.service.SickDayService;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +13,11 @@ import java.util.List;
 public class SickDayController {
 
     private final SickDayService sickDayService;
+    private final SickDayRepository sickDayRepository;
 
-    public SickDayController(SickDayService sickDayService) {
+    public SickDayController(SickDayService sickDayService, SickDayRepository sickDayRepository) {
         this.sickDayService = sickDayService;
+        this.sickDayRepository = sickDayRepository;
     }
 
     @GetMapping("/{id}")
@@ -41,5 +44,17 @@ public class SickDayController {
     public ResponseEntity<Void> deleteSickDay(@PathVariable Long id) {
         sickDayService.deleteSickDay(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // Get the month with the most sick leaves
+    @GetMapping("/most-sick-leaves-month")
+    public ResponseEntity<List<Object[]>> getMonthWithMostSickLeaves() {
+        return ResponseEntity.ok(sickDayRepository.findMonthWithMostSickLeaves());
+    }
+
+    // Get the doctors who issued the most sick leaves
+    @GetMapping("/top-doctors")
+    public ResponseEntity<List<Object[]>> getDoctorsWithMostSickLeaves() {
+        return ResponseEntity.ok(sickDayRepository.findDoctorsWithMostSickLeaves());
     }
 }
