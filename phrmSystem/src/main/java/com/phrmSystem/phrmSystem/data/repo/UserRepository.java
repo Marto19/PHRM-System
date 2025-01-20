@@ -30,4 +30,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     boolean existsByUniqueIdentification(String uniqueIdentification);
 
+    Optional<User> findByUniqueIdentification(String uniqueIdentification);
+
 }
