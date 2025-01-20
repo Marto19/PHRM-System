@@ -75,6 +75,12 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        // Check for dependencies
+        if (!user.getDoctorAppointments().isEmpty()) {
+            throw new RuntimeException("Cannot delete user with active appointments. Please reassign or delete appointments first.");
+        }
+
         try {
             userRepository.deleteById(userId);
         } catch (RuntimeException ex) {

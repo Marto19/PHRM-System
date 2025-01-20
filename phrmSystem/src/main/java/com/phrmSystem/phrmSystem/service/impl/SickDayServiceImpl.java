@@ -15,6 +15,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Implementation of the SickDayService interface, responsible for managing
+ * SickDay entities and their operations.
+ */
 @Service
 public class SickDayServiceImpl implements SickDayService {
 
@@ -22,19 +26,38 @@ public class SickDayServiceImpl implements SickDayService {
     private final UserRepository userRepository;
     private final DiagnosisRepository diagnosisRepository;
 
+    /**
+     * Constructs a SickDayServiceImpl with required dependencies.
+     *
+     * @param sickDayRepository   repository for managing SickDay entities.
+     * @param userRepository      repository for managing User entities.
+     * @param diagnosisRepository repository for managing Diagnosis entities.
+     */
     public SickDayServiceImpl(SickDayRepository sickDayRepository, UserRepository userRepository, DiagnosisRepository diagnosisRepository) {
         this.sickDayRepository = sickDayRepository;
         this.userRepository = userRepository;
         this.diagnosisRepository = diagnosisRepository;
     }
 
+    /**
+     * Retrieves a SickDay by its ID.
+     *
+     * @param id the ID of the SickDay to retrieve.
+     * @return the SickDayDTO representation of the SickDay.
+     * @throws RuntimeException if no SickDay is found with the given ID.
+     */
     @Override
     public SickDayDTO getSickDayById(Long id) {
-        SickDay sickDay = sickDayRepository.findById(id)
+        return sickDayRepository.findById(id)
+                .map(this::mapToDTO)
                 .orElseThrow(() -> new RuntimeException("SickDay not found with id: " + id));
-        return mapToDTO(sickDay);
     }
 
+    /**
+     * Retrieves all SickDays in the system.
+     *
+     * @return a list of SickDayDTOs.
+     */
     @Override
     public List<SickDayDTO> getAllSickDays() {
         return sickDayRepository.findAll().stream()
@@ -42,57 +65,69 @@ public class SickDayServiceImpl implements SickDayService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Creates a new SickDay based on the provided SickDayDTO.
+     *
+     * @param sickDayDTO the data transfer object containing SickDay details.
+     * @return the created SickDay as a SickDayDTO.
+     * @throws IllegalArgumentException if any validation fails.
+     */
     @Override
     public SickDayDTO createSickDay(SickDayDTO sickDayDTO) {
-        if (sickDayDTO.getStartDate() != null && sickDayDTO.getEndDate() != null) {
-            long daysBetween = ChronoUnit.DAYS.between(sickDayDTO.getStartDate(), sickDayDTO.getEndDate());
-            sickDayDTO.setNumberOfDays((int) daysBetween);
-        }
+        validateSickDayDTO(sickDayDTO);
+        calculateNumberOfDays(sickDayDTO);
 
         SickDay sickDay = mapToEntity(sickDayDTO);
         SickDay savedSickDay = sickDayRepository.save(sickDay);
         return mapToDTO(savedSickDay);
     }
 
-
+    /**
+     * Updates an existing SickDay.
+     *
+     * @param id          the ID of the SickDay to update.
+     * @param sickDayDTO  the new details for the SickDay.
+     * @return the updated SickDay as a SickDayDTO.
+     * @throws RuntimeException if no SickDay is found with the given ID.
+     * @throws IllegalArgumentException if any validation fails.
+     */
     @Override
     public SickDayDTO updateSickDay(Long id, SickDayDTO sickDayDTO) {
-        SickDay sickDay = sickDayRepository.findById(id)
+        SickDay existingSickDay = sickDayRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("SickDay not found with id: " + id));
 
-        sickDay.setStartDate(sickDayDTO.getStartDate());
-        sickDay.setEndDate(sickDayDTO.getEndDate());
+        validateSickDayDTO(sickDayDTO);
+        calculateNumberOfDays(sickDayDTO);
 
-        if (sickDayDTO.getStartDate() != null && sickDayDTO.getEndDate() != null) {
-            long daysBetween = ChronoUnit.DAYS.between(sickDayDTO.getStartDate(), sickDayDTO.getEndDate());
-            sickDay.setNumberOfDays((int) daysBetween);
-        }
+        existingSickDay.setStartDate(sickDayDTO.getStartDate());
+        existingSickDay.setEndDate(sickDayDTO.getEndDate());
+        existingSickDay.setNumberOfDays(sickDayDTO.getNumberOfDays());
 
         if (sickDayDTO.getPatientId() != null) {
-            User patient = userRepository.findById(sickDayDTO.getPatientId())
-                    .orElseThrow(() -> new RuntimeException("Patient not found with id: " + sickDayDTO.getPatientId()));
-            sickDay.setPatient(patient);
+            User patient = findUserById(sickDayDTO.getPatientId(), "Patient");
+            existingSickDay.setPatient(patient);
         }
 
         if (sickDayDTO.getDoctorId() != null) {
-            User doctor = userRepository.findById(sickDayDTO.getDoctorId())
-                    .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + sickDayDTO.getDoctorId()));
-            sickDay.setDoctor(doctor);
+            User doctor = findUserById(sickDayDTO.getDoctorId(), "Doctor");
+            existingSickDay.setDoctor(doctor);
         }
 
         if (sickDayDTO.getDiagnosisIds() != null && !sickDayDTO.getDiagnosisIds().isEmpty()) {
-            Set<Diagnosis> diagnoses = sickDayDTO.getDiagnosisIds().stream()
-                    .map(diagnosisId -> diagnosisRepository.findById(diagnosisId)
-                            .orElseThrow(() -> new RuntimeException("Diagnosis not found with id: " + diagnosisId)))
-                    .collect(Collectors.toSet());
-            sickDay.setDiagnosis(diagnoses);
+            Set<Diagnosis> diagnoses = mapDiagnosisIdsToEntities(sickDayDTO.getDiagnosisIds());
+            existingSickDay.setDiagnosis(diagnoses);
         }
 
-        SickDay updatedSickDay = sickDayRepository.save(sickDay);
+        SickDay updatedSickDay = sickDayRepository.save(existingSickDay);
         return mapToDTO(updatedSickDay);
     }
 
-
+    /**
+     * Deletes a SickDay by its ID.
+     *
+     * @param id the ID of the SickDay to delete.
+     * @throws RuntimeException if no SickDay is found with the given ID.
+     */
     @Override
     public void deleteSickDay(Long id) {
         SickDay sickDay = sickDayRepository.findById(id)
@@ -100,7 +135,75 @@ public class SickDayServiceImpl implements SickDayService {
         sickDayRepository.delete(sickDay);
     }
 
+    /**
+     * Validates the SickDayDTO for required fields and logical correctness.
+     *
+     * @param sickDayDTO the SickDayDTO to validate.
+     * @throws IllegalArgumentException if validation fails.
+     */
+    private void validateSickDayDTO(SickDayDTO sickDayDTO) {
+        if (sickDayDTO.getStartDate() == null || sickDayDTO.getEndDate() == null) {
+            throw new IllegalArgumentException("Start and end dates must not be null.");
+        }
+        if (sickDayDTO.getStartDate().isAfter(sickDayDTO.getEndDate())) {
+            throw new IllegalArgumentException("Start date cannot be after end date.");
+        }
+        if (sickDayDTO.getPatientId() == null) {
+            throw new IllegalArgumentException("Patient ID must not be null.");
+        }
+        if (sickDayDTO.getDoctorId() == null) {
+            throw new IllegalArgumentException("Doctor ID must not be null.");
+        }
+    }
+
+    /**
+     * Calculates and sets the number of days between the start and end dates.
+     *
+     * @param sickDayDTO the SickDayDTO containing the dates.
+     */
+    private void calculateNumberOfDays(SickDayDTO sickDayDTO) {
+        long daysBetween = ChronoUnit.DAYS.between(sickDayDTO.getStartDate(), sickDayDTO.getEndDate());
+        sickDayDTO.setNumberOfDays((int) daysBetween);
+    }
+
+    /**
+     * Retrieves a User by their ID.
+     *
+     * @param userId the ID of the User.
+     * @param role   the role description for the error message.
+     * @return the User entity.
+     * @throws RuntimeException if no User is found with the given ID.
+     */
+    private User findUserById(Long userId, String role) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException(role + " not found with id: " + userId));
+    }
+
+    /**
+     * Maps a set of diagnosis IDs to their corresponding Diagnosis entities.
+     *
+     * @param diagnosisIds the IDs of the diagnoses.
+     * @return a set of Diagnosis entities.
+     * @throws RuntimeException if any Diagnosis ID is not found.
+     */
+    private Set<Diagnosis> mapDiagnosisIdsToEntities(Set<Long> diagnosisIds) {
+        return diagnosisIds.stream()
+                .map(id -> diagnosisRepository.findById(id)
+                        .orElseThrow(() -> new RuntimeException("Diagnosis not found with id: " + id)))
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Maps a SickDay entity to a SickDayDTO.
+     *
+     * @param sickDay the SickDay entity.
+     * @return the SickDayDTO representation.
+     */
     private SickDayDTO mapToDTO(SickDay sickDay) {
+        if (sickDay == null) {
+            return null;
+        }
+
         SickDayDTO dto = new SickDayDTO();
         dto.setId(sickDay.getId());
         dto.setStartDate(sickDay.getStartDate());
@@ -108,37 +211,41 @@ public class SickDayServiceImpl implements SickDayService {
         dto.setNumberOfDays(sickDay.getNumberOfDays());
         dto.setDoctorId(sickDay.getDoctor() != null ? sickDay.getDoctor().getId() : null);
         dto.setPatientId(sickDay.getPatient() != null ? sickDay.getPatient().getId() : null);
+
+        // Handle diagnoses gracefully
+        dto.setDiagnosisIds(sickDay.getDiagnosis() != null
+                ? sickDay.getDiagnosis().stream()
+                .map(diagnosis -> diagnosis != null ? diagnosis.getId() : null)
+                .filter(id -> id != null) // Skip any null IDs
+                .collect(Collectors.toSet())
+                : Set.of());
         return dto;
     }
 
 
+    /**
+     * Maps a SickDayDTO to a SickDay entity.
+     *
+     * @param sickDayDTO the SickDayDTO.
+     * @return the SickDay entity.
+     */
     private SickDay mapToEntity(SickDayDTO sickDayDTO) {
         SickDay sickDay = new SickDay();
         sickDay.setStartDate(sickDayDTO.getStartDate());
         sickDay.setEndDate(sickDayDTO.getEndDate());
         sickDay.setNumberOfDays(sickDayDTO.getNumberOfDays());
 
-        if (sickDayDTO.getPatientId() != null) {
-            User patient = userRepository.findById(sickDayDTO.getPatientId())
-                    .orElseThrow(() -> new RuntimeException("Patient not found with id: " + sickDayDTO.getPatientId()));
-            sickDay.setPatient(patient);
-        }
+        User patient = findUserById(sickDayDTO.getPatientId(), "Patient");
+        sickDay.setPatient(patient);
 
-        if (sickDayDTO.getDoctorId() != null) {
-            User doctor = userRepository.findById(sickDayDTO.getDoctorId())
-                    .orElseThrow(() -> new RuntimeException("Doctor not found with id: " + sickDayDTO.getDoctorId()));
-            sickDay.setDoctor(doctor);
-        }
+        User doctor = findUserById(sickDayDTO.getDoctorId(), "Doctor");
+        sickDay.setDoctor(doctor);
 
         if (sickDayDTO.getDiagnosisIds() != null && !sickDayDTO.getDiagnosisIds().isEmpty()) {
-            Set<Diagnosis> diagnoses = sickDayDTO.getDiagnosisIds().stream()
-                    .map(diagnosisId -> diagnosisRepository.findById(diagnosisId)
-                            .orElseThrow(() -> new RuntimeException("Diagnosis not found with id: " + diagnosisId)))
-                    .collect(Collectors.toSet());
+            Set<Diagnosis> diagnoses = mapDiagnosisIdsToEntities(sickDayDTO.getDiagnosisIds());
             sickDay.setDiagnosis(diagnoses);
         }
 
         return sickDay;
     }
-
 }

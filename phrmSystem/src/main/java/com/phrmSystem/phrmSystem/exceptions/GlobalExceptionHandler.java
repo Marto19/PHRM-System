@@ -34,5 +34,23 @@ public class GlobalExceptionHandler {
         errorResponse.put("error", ex.getMessage());
         return errorResponse;
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleRuntimeException(RuntimeException ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", ex.getMessage());
+        return errorResponse;
+    }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public Map<String, String> handleGenericException(Exception ex) {
+        Map<String, String> errorResponse = new HashMap<>();
+        errorResponse.put("error", "An unexpected error occurred.");
+        errorResponse.put("details", ex.getMessage());
+        return errorResponse;
+    }
+
 }
 

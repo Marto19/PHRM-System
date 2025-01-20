@@ -2,12 +2,22 @@ package com.phrmSystem.phrmSystem.mappers;
 
 import com.phrmSystem.phrmSystem.data.entity.Diagnosis;
 import com.phrmSystem.phrmSystem.data.entity.User;
+import com.phrmSystem.phrmSystem.data.repo.DiagnosisRepository;
 import com.phrmSystem.phrmSystem.dto.DiagnosisDTO;
 import com.phrmSystem.phrmSystem.dto.UserDTO;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 public class MappingService {
+
+    private final DiagnosisRepository diagnosisRepository;
+
+    public MappingService(DiagnosisRepository diagnosisRepository) {
+        this.diagnosisRepository = diagnosisRepository;
+    }
 
     // Map User entity to UserDTO
     public UserDTO mapToUserDTO(User user) {
@@ -22,14 +32,29 @@ public class MappingService {
     }
 
     // Map Diagnosis entity to DiagnosisDTO
-    public DiagnosisDTO mapToDiagnosisDTO(Diagnosis diagnosis) {
-        if (diagnosis == null) {
-            return null;
+    private Set<Diagnosis> mapDiagnosisIdsToEntities(Set<Long> diagnosisIds) {
+        if (diagnosisIds == null || diagnosisIds.isEmpty()) {
+            return Set.of(); // Return an empty set if no IDs are provided
         }
-        DiagnosisDTO diagnosisDTO = new DiagnosisDTO();
-        diagnosisDTO.setId(diagnosis.getId());
-        diagnosisDTO.setDiagnosisName(diagnosis.getDiagnosisName());
-        diagnosisDTO.setDiagnosisDescription(diagnosis.getDiagnosisDescription());
-        return diagnosisDTO;
+
+        return diagnosisIds.stream()
+                .map(this::findDiagnosisById)
+                .filter(diagnosis -> diagnosis != null) // Skip any null diagnoses
+                .collect(Collectors.toSet());
     }
+
+    /**
+     * Finds a Diagnosis by its ID. Logs a warning and returns null if not found.
+     *
+     * @param id the ID of the Diagnosis to find.
+     * @return the Diagnosis entity or null if not found.
+     */
+    private Diagnosis findDiagnosisById(Long id) {
+        return diagnosisRepository.findById(id)
+                .orElseGet(() -> {
+                    System.out.println("Diagnosis with ID " + id + " not found. Skipping this ID.");
+                    return null;
+                });
+    }
+
 }
