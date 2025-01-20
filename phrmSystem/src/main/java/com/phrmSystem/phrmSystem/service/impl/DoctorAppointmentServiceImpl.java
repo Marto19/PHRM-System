@@ -104,7 +104,7 @@ public class DoctorAppointmentServiceImpl implements DoctorAppointmentService {
                 .collect(Collectors.toList());
     }
 
-    @Override
+    @Override   //todo: fix 400 bad request - make it gracefully
     public void deleteDoctorAppointment(Long id) {
         if (!doctorAppointmentRepository.existsById(id)) {
             throw new RuntimeException("Appointment not found");

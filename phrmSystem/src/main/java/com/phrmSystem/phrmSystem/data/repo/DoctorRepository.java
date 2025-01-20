@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DoctorRepository extends JpaRepository<User, Long> {
@@ -20,7 +21,7 @@ public interface DoctorRepository extends JpaRepository<User, Long> {
 
     // Find doctor by unique ID
     @Query("SELECT u FROM User u WHERE u.uniqueId = :uniqueId")
-    User findDoctorByUniqueId(String uniqueId);
+    Optional<User> findDoctorByUniqueId(String uniqueId);
 
     // Find doctor specializations
     @Query("SELECT u FROM User u JOIN u.specializations s WHERE u.id = :doctorId")
