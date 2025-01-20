@@ -248,4 +248,22 @@ public class SickDayServiceImpl implements SickDayService {
 
         return sickDay;
     }
+
+    @Override
+    public List<Object[]> getMonthWithMostSickLeaves() {
+        try {
+            return sickDayRepository.findMonthWithMostSickLeaves();
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to fetch month with most sick leaves.", ex);
+        }
+    }
+
+    @Override
+    public List<Object[]> getDoctorsWithMostSickLeaves() {
+        try {
+            return sickDayRepository.findDoctorsWithMostSickLeaves();
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to fetch doctors with most sick leaves.", ex);
+        }
+    }
 }

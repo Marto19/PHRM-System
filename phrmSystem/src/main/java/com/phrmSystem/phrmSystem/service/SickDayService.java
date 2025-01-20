@@ -10,4 +10,6 @@ public interface SickDayService {
     SickDayDTO createSickDay(SickDayDTO sickDayDTO);
     SickDayDTO updateSickDay(Long id, SickDayDTO sickDayDTO);
     void deleteSickDay(Long id);
+    List<Object[]> getMonthWithMostSickLeaves();
+    List<Object[]> getDoctorsWithMostSickLeaves();
 }
