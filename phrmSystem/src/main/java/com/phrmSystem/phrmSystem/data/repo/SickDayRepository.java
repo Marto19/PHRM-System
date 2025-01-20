@@ -14,11 +14,15 @@ public interface SickDayRepository extends JpaRepository<SickDay, Long> {
     @Query("SELECT s FROM SickDay s WHERE s.startDate BETWEEN :startDate AND :endDate")
     List<SickDay> findSickDaysWithinPeriod(LocalDate startDate, LocalDate endDate);
 
-    @Query("SELECT s.doctor, COUNT(s) FROM SickDay s GROUP BY s.doctor ORDER BY COUNT(s) DESC")
-    List<Object[]> findDoctorsWithMostSickLeaves();
-
     @EntityGraph(attributePaths = {"patient", "doctor", "diagnosis"})
     @Query("SELECT s FROM SickDay s")
     List<SickDay> findAllWithRelations();
+
+    //---------------------------------------------------------------------------
+    @Query("SELECT FUNCTION('MONTH', s.startDate), COUNT(s) FROM SickDay s GROUP BY FUNCTION('MONTH', s.startDate) ORDER BY COUNT(s) DESC")
+    List<Object[]> findMonthWithMostSickLeaves();
+
+    @Query("SELECT s.doctor, COUNT(s) FROM SickDay s GROUP BY s.doctor ORDER BY COUNT(s) DESC")
+    List<Object[]> findDoctorsWithMostSickLeaves();
 
 }

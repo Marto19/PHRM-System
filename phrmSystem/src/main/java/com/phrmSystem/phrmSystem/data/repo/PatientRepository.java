@@ -32,4 +32,6 @@ public interface PatientRepository extends JpaRepository<User, Long> {
     // Find a patient's illness history
     @Query("SELECT u.patientIllnessHistory FROM User u WHERE u.id = :patientId")
     List<?> findPatientIllnessHistory(Long patientId);
+
+
 }

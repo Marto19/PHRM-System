@@ -25,4 +25,19 @@ public interface DoctorRepository extends JpaRepository<User, Long> {
     // Find doctor specializations
     @Query("SELECT u FROM User u JOIN u.specializations s WHERE u.id = :doctorId")
     List<User> findDoctorSpecializations(Long doctorId);
+
+
+    //----------------------------------------------------------------------------
+    @Query(value = """
+    SELECT d.*, COUNT(p.idpatient) AS patient_count
+    FROM doctors d
+    JOIN patients p ON p.personal_doctors_id = d.iddoctors
+    WHERE d.is_personal_doctor = TRUE
+    GROUP BY d.iddoctors
+""", nativeQuery = true)
+    List<Object[]> countPatientsPerPersonalDoctorNative();
+
+
+
+
 }
