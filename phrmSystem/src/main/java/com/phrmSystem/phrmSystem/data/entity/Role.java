@@ -32,5 +32,9 @@ public class Role extends BaseEntity {
 
     @ManyToMany(mappedBy = "role")
     private List<User> user  = new LinkedList<>();
+
+    public Role(String user) {
+
+    }
 }
 
