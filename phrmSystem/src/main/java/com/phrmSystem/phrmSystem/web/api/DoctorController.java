@@ -65,13 +65,6 @@ public class DoctorController {
     public ResponseEntity<User> getDoctorByUniqueId(@PathVariable String uniqueId) {
         return ResponseEntity.ok(doctorService.getDoctorByUniqueId(uniqueId));
     }
-
-    // Fetch all personal doctors
-    @GetMapping("/personal")
-    public ResponseEntity<List<User>> getAllPersonalDoctors() {
-        return ResponseEntity.ok(doctorService.getAllPersonalDoctors());
-    }
-
     // Fetch a doctor's specializations
     @GetMapping("/{id}/specializations")
     public ResponseEntity<List<SpecializationDTO>> getDoctorSpecializations(@PathVariable Long id) {
@@ -90,5 +83,17 @@ public class DoctorController {
     @GetMapping("/{id}/appointments")
     public ResponseEntity<List<AppointmentDTO>> getDoctorAppointments(@PathVariable Long id) {
         return ResponseEntity.ok(doctorService.getDoctorAppointments(id));
+    }
+
+    // Get all personal doctors
+    @GetMapping("/personal-doctors")
+    public ResponseEntity<List<User>> getAllPersonalDoctors() {
+        return ResponseEntity.ok(doctorRepository.findAllPersonalDoctors());
+    }
+
+    // Count patients for each personal doctor
+    @GetMapping("/patient-count")
+    public ResponseEntity<List<Object[]>> getPatientCountPerPersonalDoctor() {
+        return ResponseEntity.ok(doctorRepository.countPatientsPerPersonalDoctorNative());
     }
 }

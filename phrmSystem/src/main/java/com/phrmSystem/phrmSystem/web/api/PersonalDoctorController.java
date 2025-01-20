@@ -19,15 +19,5 @@ public class PersonalDoctorController {
         this.doctorRepository = doctorRepository;
     }
 
-    // Get all personal doctors
-    @GetMapping
-    public ResponseEntity<List<User>> getAllPersonalDoctors() {
-        return ResponseEntity.ok(doctorRepository.findAllPersonalDoctors());
-    }
 
-    // Count patients for each personal doctor
-    @GetMapping("/patient-count")
-    public ResponseEntity<List<Object[]>> getPatientCountPerPersonalDoctor() {
-        return ResponseEntity.ok(doctorRepository.countPatientsPerPersonalDoctorNative());
-    }
 }
