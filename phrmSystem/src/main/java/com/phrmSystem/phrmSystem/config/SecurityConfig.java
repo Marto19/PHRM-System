@@ -34,20 +34,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-//    @Bean
-//    public JwtDecoder jwtDecoder() {
-//        String issuerUri = "http://localhost:4000/realms/phrm_system";
-//        return JwtDecoders.fromIssuerLocation(issuerUri);
-//    }
-//
-//    @Bean
-//    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-//        final JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-//        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakAuthorityConverter());
-//        return jwtAuthenticationConverter;
-//    }
-
-
 
     private final  JwtAuthConverter jwtAuthConverter;
 
@@ -56,14 +42,18 @@ public class SecurityConfig {
         http.authorizeHttpRequests
                         (
                                 authz -> authz
-//                                        .requestMatchers("/recipes/**").hasRole("doctor")
-//                                        .requestMatchers("/recipes/**").hasRole("admin")
-//                                        .requestMatchers("/api/recipes/**").hasAuthority("doctor")
-//                                        .requestMatchers("/medicines/**").hasAuthority("seller")
-//                                        .requestMatchers("/api/medicines/**").hasAuthority("seller")
-//                                        .requestMatchers(HttpMethod.GET, "/medicines").hasAuthority("customer")
-//                                        .anyRequest().authenticated()
-                                        .anyRequest().permitAll()
+                                        .requestMatchers("/api/users/**").hasAnyRole("client_admin") // Admin manages users
+                                        .requestMatchers("/api/roles/**").hasRole("client_admin") // Admin manages roles
+                                        .requestMatchers("/api/doctors/**").hasAnyRole("client_admin", "client_doctor") // Doctors and admins manage doctor data
+                                        .requestMatchers("/api/patients/**").hasAnyRole("client_admin", "client_doctor", "client_patient") // Patients, doctors, and admins access patient data
+                                        .requestMatchers("/api/appointments/**").hasAnyRole("client_admin", "client_doctor") // Appointments managed by doctors and admins
+                                        .requestMatchers("/api/medicines/**").hasAnyRole("client_admin", "client_doctor") // Medicines assigned by doctors, managed by admins
+                                        .requestMatchers("/api/diagnoses/**").hasAnyRole("client_admin", "client_doctor") // Diagnoses managed by doctors and admins
+                                        .requestMatchers("/api/sick-days/**").hasAnyRole("client_admin", "client_doctor") // Sick days managed by doctors and admins
+                                        .requestMatchers("/api/illness-histories/**").hasAnyRole("client_admin", "client_doctor") // Illness histories accessed by doctors and admins
+                                        .requestMatchers("/api/demo/**").permitAll() // Public endpoints for demonstration purposes
+                                        .anyRequest().authenticated() // All other requests require authentication
+//                                        .anyRequest().permitAll()
                         )
                 .csrf(csrf -> csrf.disable())
                 .oauth2ResourceServer(oauth2 -> oauth2
