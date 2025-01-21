@@ -17,45 +17,236 @@ import DoctorSpecializationForm from "./components/doctorSpecialization/DoctorSp
 import DoctorSpecializationList from "./components/doctorSpecialization/DoctorSpecializationList.jsx";
 import DoctorList from "./components/doctor/DoctorList.jsx";
 import DoctorForm from "./components/doctor/DoctorForm.jsx";
-import AppointmentList from "./components/appointment /AppointmentList"; // Adjust the path if needed
-import AppointmentForm   from "./components/appointment /AppointmentForm.jsx"; // Adjust the path if needed
-
+import AppointmentList from "./components/appointment /AppointmentList"; // Adjusted the path
+import AppointmentForm from "./components/appointment /AppointmentForm.jsx"; // Adjusted the path
+import Protected from "./components/Protected.jsx"; // Import the Protected component
+import Unauthorized from "./components/navigation/Unauthorized"; // Add an Unauthorized component for handling unauthorized access
 
 function App() {
     return (
         <Router>
             <Navbar />
             <Routes>
-                <Route path="/users" element={<UserList />} />
-                <Route path="/users/create" element={<UserForm />} />
-                <Route path="/users/:id/edit" element={<UserForm />} />
-                <Route path="/sick-days" element={<SickDayList />} />
-                <Route path="/sick-days/create" element={<SickDayForm />} />
-                <Route path="/sick-days/:id/edit" element={<SickDayForm />} />
-                <Route path="/roles" element={<RoleList />} />
-                <Route path="/roles/create" element={<RoleForm />} />
-                <Route path="/roles/:id/edit" element={<RoleForm />} />
-                <Route path="/illness-histories" element={<PatientIllnessHistoryList />} />
-                <Route path="/illness-histories/create" element={<PatientIllnessHistoryForm />} />
-                <Route path="/illness-histories/:id/edit" element={<PatientIllnessHistoryForm />} />
-                <Route path="/patients" element={<PatientList />} />
-                <Route path="/patients/create" element={<PatientForm />} />
-                <Route path="/patients/:id/edit" element={<PatientForm />} />
-                <Route path="/medicines" element={<MedicineList />} />
-                <Route path="/medicines/create" element={<MedicineForm />} />
-                <Route path="/medicines/:id/edit" element={<MedicineForm />} />
-                <Route path="/specializations" element={<DoctorSpecializationList />} />
-                <Route path="/specializations/create" element={<DoctorSpecializationForm />} />
-                <Route path="/specializations/:id/edit" element={<DoctorSpecializationForm />} />
-                <Route path="/doctors" element={<DoctorList />} />
-                <Route path="/doctors/create" element={<DoctorForm />} />
-                <Route path="/doctors/:id/edit" element={<DoctorForm />} />
-                <Route path="/doctors/:id/specializations" element={<DoctorSpecializationList />} />
-                <Route path="/doctors/:id/appointments" element={<AppointmentList />} />
-                <Route path="/doctors/:id/specializations/edit" element={<DoctorSpecializationForm />} />
-                <Route path="/appointments" element={<AppointmentList />} />
-                <Route path="/appointments/create" element={<AppointmentForm />} />
-                <Route path="/appointments/:id/edit" element={<AppointmentForm />} />
+                {/* Public Route for Unauthorized Access */}
+                <Route path="/unauthorized" element={<Unauthorized />} />
+
+                {/* Protected Routes */}
+                <Route
+                    path="/users"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <UserList />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/users/create"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <UserForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/users/:id/edit"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <UserForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/sick-days"
+                    element={
+                        <Protected allowedRoles={["client_admin", "client_doctor"]}>
+                            <SickDayList />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/sick-days/create"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <SickDayForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/sick-days/:id/edit"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <SickDayForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/roles"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <RoleList />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/roles/create"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <RoleForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/roles/:id/edit"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <RoleForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/illness-histories"
+                    element={
+                        <Protected allowedRoles={["client_admin", "client_doctor"]}>
+                            <PatientIllnessHistoryList />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/illness-histories/create"
+                    element={
+                        <Protected allowedRoles={["client_admin", "client_doctor"]}>
+                            <PatientIllnessHistoryForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/illness-histories/:id/edit"
+                    element={
+                        <Protected allowedRoles={["client_admin", "client_doctor"]}>
+                            <PatientIllnessHistoryForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/patients"
+                    element={
+                        <Protected allowedRoles={["client_admin", "client_doctor"]}>
+                            <PatientList />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/patients/create"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <PatientForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/patients/:id/edit"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <PatientForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/medicines"
+                    element={
+                        <Protected allowedRoles={["client_admin", "client_doctor"]}>
+                            <MedicineList />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/medicines/create"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <MedicineForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/medicines/:id/edit"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <MedicineForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/specializations"
+                    element={
+                        <Protected allowedRoles={["client_admin", "client_doctor"]}>
+                            <DoctorSpecializationList />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/specializations/create"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <DoctorSpecializationForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/specializations/:id/edit"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <DoctorSpecializationForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/doctors"
+                    element={
+                        <Protected allowedRoles={["client_admin", "client_doctor"]}>
+                            <DoctorList />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/doctors/create"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <DoctorForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/doctors/:id/edit"
+                    element={
+                        <Protected allowedRoles={["client_admin"]}>
+                            <DoctorForm />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/doctors/:id/appointments"
+                    element={
+                        <Protected allowedRoles={["client_admin", "client_doctor"]}>
+                            <AppointmentList />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/appointments"
+                    element={
+                        <Protected allowedRoles={["client_admin", "client_doctor"]}>
+                            <AppointmentList />
+                        </Protected>
+                    }
+                />
+                <Route
+                    path="/appointments/create"
+                    element={
+                        <Protected allowedRoles={["client_admin", "client_doctor"]}>
+                            <AppointmentForm />
+                        </Protected>
+                    }
+                />
             </Routes>
         </Router>
     );
